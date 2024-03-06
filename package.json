@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "live-server pages",
-    "build": "tsc && cp -R assets/ public/assets/ && cp -R pages/* public/"
+    "start": "live-server public",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
