@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "live-server pages",
-    "build": "tsc && rsync -av --exclude='ts' assets/ public/assets/ && cp -R pages/* public/"
+    "build": "tsc && cp -R assets/ public/assets/ && cp -R pages/* public/"
   },
   "keywords": [],
   "author": "",
