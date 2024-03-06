@@ -3,6 +3,7 @@ node_modules/
 
 # Ignore any built TypeScript output
 dist/
+public/
 
 # Ignore .env files containing environment variables
 .env
@@ -15,3 +16,4 @@ npm-debug.log
 
 # Ignore .key files
 *.key
+.vercel
