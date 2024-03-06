@@ -126,5 +126,6 @@
     // This improves issue grouping in Sentry.
     "sourceRoot": "/",
   },
+  "include": ["**/*.ts"],
   "exclude": ["node_modules"]
 }
