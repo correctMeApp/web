@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "live-server pages",
-    "build": "tsc"
+    "build": "tsc && cp -R assets public/ && cp -R pages public/"
   },
   "keywords": [],
   "author": "",
