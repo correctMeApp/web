@@ -1,35 +1,41 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import Link from 'next/link';
-import { signInWithEmail } from '@/utils/auth-helpers/server';
-import { handleRequest } from '@/utils/auth-helpers/client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
-// Define prop type with allowPassword boolean
-interface EmailSignInProps {
-  allowPassword: boolean;
+interface EntryFormProps {
   redirectMethod: string;
   disableButton?: boolean;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>, router: any) => void;
+  inputLabel: string;
+  inputPlaceholder: string;
+  inputType: string;
+  inputName: string;
+  ctaLabel: string;
 }
 
-export default function EmailSignIn({
-  allowPassword,
+export default function EntryForm({
   redirectMethod,
-  disableButton
-}: EmailSignInProps) {
+  disableButton,
+  onSubmit,
+  inputLabel,
+  inputPlaceholder,
+  inputType,
+  inputName,
+  ctaLabel
+}: EntryFormProps) {
   const router = redirectMethod === 'client' ? useRouter() : null;
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     setIsSubmitting(true); // Disable the button while the request is being handled
-    await handleRequest(e, signInWithEmail, router);
+    await onSubmit(e, router);
     setIsSubmitting(false);
   };
 
   return (
-    <div className="my-8">
+    <div className="my-4">
       <form
         noValidate={true}
         className="mb-4"
@@ -37,14 +43,14 @@ export default function EmailSignIn({
       >
         <div className="grid gap-2">
           <div className="grid gap-1">
-            <label htmlFor="email">Email</label>
+            <label htmlFor={inputName}>{inputLabel}</label>
             <input
-              id="email"
-              placeholder="name@example.com"
-              type="email"
-              name="email"
+              id={inputName}
+              placeholder={inputPlaceholder}
+              type={inputType}
+              name={inputName}
               autoCapitalize="none"
-              autoComplete="email"
+              autoComplete={inputName}
               autoCorrect="off"
               className="w-full p-3 rounded-md bg-zinc-800"
             />
@@ -56,24 +62,10 @@ export default function EmailSignIn({
             loading={isSubmitting}
             disabled={disableButton}
           >
-            Sign in
+            {ctaLabel}
           </Button>
         </div>
       </form>
-      {allowPassword && (
-        <>
-          <p>
-            <Link href="/signin/password_signin" className="font-light text-sm">
-              Sign in with email and password
-            </Link>
-          </p>
-          <p>
-            <Link href="/signin/signup" className="font-light text-sm">
-              Don't have an account? Sign up
-            </Link>
-          </p>
-        </>
-      )}
     </div>
   );
 }

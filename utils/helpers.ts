@@ -1,7 +1,3 @@
-import type { Tables } from '@/types_db';
-
-type Price = Tables<'prices'>;
-
 export const getURL = (path: string = '') => {
   // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
   let url =
@@ -26,19 +22,35 @@ export const getURL = (path: string = '') => {
   return path ? `${url}/${path}` : url;
 };
 
+export const getBackendURL = (path: string = '') => {
+  let url = process.env.NEXT_PUBLIC_BACKEND_URL as string
+
+  // Trim the URL and remove trailing slash if exists.
+  url = url.replace(/\/+$/, '');
+  // Ensure path starts without a slash to avoid double slashes in the final URL.
+  path = path.replace(/^\/+/, '');
+
+  // Concatenate the URL and the path.
+  return path ? `${url}/${path}` : url;
+};
+
 export const postData = async ({
   url,
   data
 }: {
   url: string;
-  data?: { price: Price };
+  data?: Record<string, unknown>;
 }) => {
+  console.log('postData called with url:', url, 'and data:', data);
   const res = await fetch(url, {
     method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
-    credentials: 'same-origin',
+    headers: new Headers({ 'Content-Type': 'application/json', 'x-client-type': 'web'}),
     body: JSON.stringify(data)
   });
+
+  if (res.status === 204) {
+    return res;
+  }
 
   return res.json();
 };
