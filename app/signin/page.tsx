@@ -6,7 +6,9 @@ import EntryForm from '@/components/ui/AuthForms/EntryForm';
 import Separator from '@/components/ui/AuthForms/Separator';
 import OauthSignIn from '@/components/ui/AuthForms/OauthSignIn';
 import { useState } from 'react';
-import { getBackendURL, postData } from '@/utils/helpers';
+import { getBackendURL, postData, getErrorRedirect } from '@/utils/helpers';
+import { setTokens } from '@/utils/auth-helpers/tokenHandling';
+import { redirect } from 'next/navigation';
 
 export default function SignIn({
   searchParams
@@ -17,17 +19,24 @@ export default function SignIn({
   const { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp } = useOtp();
   const [email, setEmail] = useState('');
 
-  // Use handleRequest to handle form submission and redirection
-  const handleEmailSubmit = async (e: any) => {
+  const handleEmailSubmit = async (e: any, router: any) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email')?.toString() ?? '';
     setEmail(email);
-    const result = await requestOtp(formData);
-    if (result && result.success) {
+
+    try {
+      await requestOtp(formData);
       setIsOtpGenerated(true);
-    } else {
-      // Handle error (you could show a message to the user, for example)
+    } catch (error) {
+      setIsOtpGenerated(false);
+      router.replace(
+        getErrorRedirect(
+          '/signin',
+          'Oops! Something went wrong.',
+          'Please request a new OTP to your email'
+        )
+      );
     }
   };
 
@@ -35,9 +44,19 @@ export default function SignIn({
     const formData = new FormData(e.currentTarget);
     formData.append('email', email);
     e.preventDefault();
-    setEmail(email);
-    const result = await verifyOtp(formData);
-    result && typeof result === 'string' ? router.push(result) : null;
+    try {
+      const result = await verifyOtp(formData);
+      router.replace(result);
+    } catch (error) {
+      setIsOtpGenerated(false);
+      router.replace(
+        getErrorRedirect(
+          '/signin',
+          'Oops! Something went wrong.',
+          'Please request a new OTP to your email'
+        )
+      );
+    }
   };
 
   return (
@@ -70,7 +89,7 @@ export default function SignIn({
             disableButton={searchParams.disable_button}
             onSubmit={handleOtpSubmit}
             inputLabel="One Time Password Verification"
-            inputPlaceholder="Enter OTP code sent to your email"
+            inputPlaceholder="Enter the OTP code sent to your email"
             inputType="text"
             inputName="otp"
             ctaLabel="Verify OTP"
@@ -90,39 +109,34 @@ function useOtp() {
 
   const requestOtp = async (formData: FormData) => {
     const email = formData.get('email');
-    try {
-      const response = await postData({
-        url: getBackendURL('/auth/request-otp'),
-        data: { email: email },
-      });
-      if (response.status === 204) {
-        setIsOtpGenerated(true);
-        return { success: true };
-      } else {
-        throw new Error('Failed to generate OTP');
-      }
-    } catch (error) {
-      if (error instanceof Error) {
-        return { success: false, error: error.message };
-      }
+    const response = await postData({
+      url: getBackendURL('/auth/request-otp'),
+      data: { email: email },
+      authenticated: false,
+    });
+    if (response.status !== 204) {
+      throw new Error('Failed to generate OTP');
     }
   };
 
   const verifyOtp = async (formData: FormData) => {
     const email = formData.get('email');
     const otp = formData.get('otp');
-    console.log('email:', email, 'otp:', otp);
-    try {
-      const data = await postData({
-        url: getBackendURL('/auth/verify-otp'),
-        data: { email: email, otp: otp },
-      });
-      if (data.error) {
-        throw new Error(data.error);
-      }
-      return '/dashboard'; // Return the redirect URL
-    } catch (error) {
-      return '/error'; // Return the error page URL
+
+    const response = await postData({
+      url: getBackendURL('/auth/verify-otp'),
+      data: { email: email, otp: otp },
+      authenticated: false,
+    });
+
+    console.log('response:', response.data, response.status);
+
+    if (response.status === 200 && response.data) {
+      const { accessToken, refreshToken } = response.data;
+      setTokens(accessToken, refreshToken);
+      return '/';
+    } else {
+      throw new Error('Failed to verify OTP');
     }
   };
 

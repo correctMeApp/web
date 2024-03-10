@@ -1,3 +1,6 @@
+import Cookies from "js-cookie";
+import { setTokens, wipeTokens, isUserLoggedIn } from "./auth-helpers/tokenHandling";
+
 export const getURL = (path: string = '') => {
   // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
   let url =
@@ -34,31 +37,80 @@ export const getBackendURL = (path: string = '') => {
   return path ? `${url}/${path}` : url;
 };
 
+// Function to apply common headers
+const getCommonHeaders = () => {
+  return new Headers({ 'Content-Type': 'application/json', 'x-client-type': 'web'});
+};
+
+const refreshToken = async () => {
+  const refreshUrl = getBackendURL('/auth/refresh');
+  const refreshToken = Cookies.get('refreshToken');
+
+  try {
+    const res = await fetch(refreshUrl, {
+      method: 'POST',
+      headers: getCommonHeaders(),
+      body: JSON.stringify({ token: refreshToken })
+    });
+
+    const data = await res.json();
+    setTokens(data.accessToken, data.refreshToken);
+
+    return data;
+  } catch (error) {
+    wipeTokens();
+    throw error;
+  }
+};
+
 export const postData = async ({
   url,
-  data
+  data,
+  authenticated = true
 }: {
   url: string;
   data?: Record<string, unknown>;
+  authenticated?: boolean;
 }) => {
-  console.log('postData called with url:', url, 'and data:', data);
+  const headers = getCommonHeaders();
+
+  // If authenticated, add the accessToken from cookies to the headers
+  if (authenticated) {
+    if (!isUserLoggedIn()) {
+      // redirect to login page
+      throw new Error('User is not logged in');
+    }
+
+    const accessToken = Cookies.get('accessToken');
+    if (accessToken) {
+      headers.append('Authorization', `Bearer ${accessToken}`);
+    }
+  }
+
   const res = await fetch(url, {
     method: 'POST',
-    headers: new Headers({ 'Content-Type': 'application/json', 'x-client-type': 'web'}),
+    headers: headers,
     body: JSON.stringify(data)
   });
 
-  if (res.status === 204) {
-    return res;
+  if (res.status === 401) {
+    // Refresh the token
+    const refreshedTokens = await refreshToken();
+
+    // Retry the request with the refreshed token
+    headers.set('Authorization', `Bearer ${refreshedTokens.accessToken}`);
+    const retryRes = await fetch(url, {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify(data)
+    });
+
+    const retryData = retryRes.status === 204 ? null : await retryRes.json();
+    return { status: retryRes.status, data: retryData };
   }
 
-  return res.json();
-};
-
-export const toDateTime = (secs: number) => {
-  var t = new Date(+0); // Unix epoch start.
-  t.setSeconds(secs);
-  return t;
+  const resData = res.status === 204 ? null : await res.json();
+  return { status: res.status, data: resData };
 };
 
 export const calculateTrialEndUnixTimestamp = (
