@@ -8,7 +8,6 @@ import OauthSignIn from '@/components/ui/AuthForms/OauthSignIn';
 import { useState } from 'react';
 import { getBackendURL, postData, getErrorRedirect } from '@/utils/helpers';
 import { setTokens } from '@/utils/auth-helpers/tokenHandling';
-import { redirect } from 'next/navigation';
 
 export default function SignIn({
   searchParams
