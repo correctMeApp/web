@@ -52,7 +52,7 @@ export default function EntryForm({
               autoCapitalize="none"
               autoComplete={inputName}
               autoCorrect="off"
-              className="w-full p-3 rounded-md bg-zinc-800"
+              className="w-full p-3 rounded-md bg-gray-800"
             />
           </div>
           <Button

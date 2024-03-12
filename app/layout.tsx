@@ -7,7 +7,7 @@ import 'styles/main.css';
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
-      <body className="bg-black loading">
+      <body className="bg-slate-900 loading">
         <Navbar />
         <main
           id="skip"
