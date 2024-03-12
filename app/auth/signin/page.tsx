@@ -5,9 +5,15 @@ import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import EntryForm from '@/components/ui/AuthForms/EntryForm';
 import Separator from '@/components/ui/AuthForms/Separator';
 import OauthSignIn from '@/components/ui/AuthForms/OauthSignIn';
-import { useState } from 'react';
-import { getBackendURL, postData, getErrorRedirect } from '@/utils/helpers';
-import { setTokens } from '@/utils/auth-helpers/tokenHandling';
+import { useState, useEffect } from 'react';
+import { postData, getErrorRedirect } from '@/utils/helpers';
+import { toast } from '@/components/ui/Toasts/use-toast';
+
+type ToastParams = {
+  title: string;
+  description: string;
+  variant: 'destructive' | 'default' | null;
+};
 
 export default function SignIn({
   searchParams
@@ -17,44 +23,47 @@ export default function SignIn({
   const redirectMethod = getRedirectMethod();
   const { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp } = useOtp();
   const [email, setEmail] = useState('');
+  const [toastParams, setToastParams] = useState<ToastParams | null>(null);
+
+  useEffect(() => {
+    if (toastParams) {
+      toast(toastParams);
+    }
+  }, [toastParams]);
 
   const handleEmailSubmit = async (e: any, router: any) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const email = formData.get('email')?.toString() ?? '';
+    const email = e.currentTarget.elements.email.value;
     setEmail(email);
 
     try {
-      await requestOtp(formData);
+      await requestOtp({ email });
       setIsOtpGenerated(true);
     } catch (error) {
       setIsOtpGenerated(false);
-      router.replace(
-        getErrorRedirect(
-          '/signin',
-          'Oops! Something went wrong.',
-          'Please request a new OTP to your email'
-        )
-      );
+      setToastParams({
+        title: 'Oops! Something went wrong.',
+        description: 'Please request a new OTP to your email',
+        variant: 'destructive'
+      });
+      router.replace('/auth/signin');
     }
   };
 
   const handleOtpSubmit = async (e: any, router: any) => {
-    const formData = new FormData(e.currentTarget);
-    formData.append('email', email);
     e.preventDefault();
+    const otp = e.currentTarget.elements.otp.value;
     try {
-      const result = await verifyOtp(formData);
+      const result = await verifyOtp({ email, otp });
       router.replace(result);
     } catch (error) {
       setIsOtpGenerated(false);
-      router.replace(
-        getErrorRedirect(
-          '/signin',
-          'Oops! Something went wrong.',
-          'Please request a new OTP to your email'
-        )
-      );
+      setToastParams({
+        title: 'Oops! Something went wrong.',
+        description: 'Please request a new OTP to your email',
+        variant: 'destructive'
+      });
+      router.replace('/auth/signin');
     }
   };
 
@@ -103,40 +112,38 @@ export default function SignIn({
   );
 }
 
+
 function useOtp() {
   const [isOtpGenerated, setIsOtpGenerated] = useState(false);
 
-  const requestOtp = async (formData: FormData) => {
-    const email = formData.get('email');
-    const response = await postData({
-      url: getBackendURL('/auth/request-otp'),
-      data: { email: email },
-      authenticated: false,
-    });
+  const requestOtp = async ({ email }: { email: string }) => {
+
+    const response = await fetch('/api/request-otp', {  
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+      });
+  
     if (response.status !== 204) {
       throw new Error('Failed to generate OTP');
     }
   };
 
-  const verifyOtp = async (formData: FormData) => {
-    const email = formData.get('email');
-    const otp = formData.get('otp');
+  const verifyOtp = async ({ email, otp }: { email: string; otp: string }) => {
 
-    const response = await postData({
-      url: getBackendURL('/auth/verify-otp'),
-      data: { email: email, otp: otp },
-      authenticated: false,
-    });
+    const response = await fetch('/api/verify-otp', {  
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, otp })
+      });
+  
+    console.log('verifyOtp response', response);
 
-    console.log('response:', response.data, response.status);
-
-    if (response.status === 200 && response.data) {
-      const { accessToken, refreshToken } = response.data;
-      setTokens(accessToken, refreshToken);
-      return '/';
-    } else {
-      throw new Error('Failed to verify OTP');
-    }
+    // if (response.status !== 204) {
+    //   throw new Error('Failed to verify OTP');
+    // }
+  
+    return '/';
   };
 
   return { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp };

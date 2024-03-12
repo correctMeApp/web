@@ -1,5 +1,6 @@
-import Cookies from "js-cookie";
-import { setTokens, wipeTokens, isUserLoggedIn } from "./auth-helpers/tokenHandling";
+import { parse } from 'cookie';
+import { NextRequest } from "next/server";
+import { setTokens } from './auth-helpers/tokenHandling';
 
 export const getURL = (path: string = '') => {
   // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
@@ -42,48 +43,62 @@ const getCommonHeaders = () => {
   return new Headers({ 'Content-Type': 'application/json', 'x-client-type': 'web'});
 };
 
-const refreshToken = async () => {
-  const refreshUrl = getBackendURL('/auth/refresh');
-  const refreshToken = Cookies.get('refreshToken');
+const refreshToken = async (req: NextRequest) => {
+  const cookies = parse(req.headers.get('cookie') || '');
+  const refreshToken = cookies.refreshToken;
+
+  console.log('refreshToken', refreshToken)
 
   try {
-    const res = await fetch(refreshUrl, {
-      method: 'POST',
-      headers: getCommonHeaders(),
-      body: JSON.stringify({ token: refreshToken })
+    const response = await postData({
+      url: getBackendURL('/auth/refresh'),
+      data: { token: refreshToken },
+      authenticated: false,
+      req,
     });
 
-    const data = await res.json();
-    setTokens(data.accessToken, data.refreshToken);
+    const { accessToken, refreshToken: newRefreshToken } = response.data;
 
-    return data;
+    const cookies = setTokens(accessToken, newRefreshToken);
+    const headers = new Headers();
+    cookies.forEach(cookie => headers.append('Set-Cookie', cookie));
+
+    return new Response(null, {
+      status: 204,
+      headers,
+    });
   } catch (error) {
-    wipeTokens();
-    throw error;
+    if (error instanceof Error) {
+      return new Response(JSON.stringify({ message: error.message }), {status: 500, headers: { 'Content-Type': 'application/json' }})
+    }
+    // If it's not an Error object, return a generic error message
+    return new Response(JSON.stringify({ message: 'An error occurred while refreshing tokens' }), {status: 500, headers: { 'Content-Type': 'application/json' }})
   }
 };
 
 export const postData = async ({
   url,
   data,
-  authenticated = true
+  authenticated = true,
+  req
 }: {
   url: string;
   data?: Record<string, unknown>;
   authenticated?: boolean;
+  req?: NextRequest;
 }) => {
   const headers = getCommonHeaders();
 
   // If authenticated, add the accessToken from cookies to the headers
-  if (authenticated) {
-    if (!isUserLoggedIn()) {
-      // redirect to login page
-      throw new Error('User is not logged in');
-    }
+  if (authenticated && req) {
+    const cookies = parse(req.headers.get('cookie') || '');
+    const accessToken = cookies.accessToken;
 
-    const accessToken = Cookies.get('accessToken');
-    if (accessToken) {
+    // Check if the access token exists and if it's in the correct format
+    if (accessToken && accessToken.split('.').length === 3) {
       headers.append('Authorization', `Bearer ${accessToken}`);
+    } else {
+      throw new Error('Invalid or expired access token');
     }
   }
 
@@ -93,20 +108,39 @@ export const postData = async ({
     body: JSON.stringify(data)
   });
 
-  if (res.status === 401) {
+  if (res.status === 401 && req) {
     // Refresh the token
-    const refreshedTokens = await refreshToken();
+    await refreshToken(req);
 
-    // Retry the request with the refreshed token
-    headers.set('Authorization', `Bearer ${refreshedTokens.accessToken}`);
+    // Retry the request with the new token from cookies
+    const cookies = parse(req.headers.get('cookie') || '');
+    const accessToken = cookies.accessToken;
+
+    // Check if the access token exists and if it's in the correct format
+    if (accessToken && accessToken.split('.').length === 3) {
+      headers.append('Authorization', `Bearer ${accessToken}`);
+    } else {
+      throw new Error('Invalid or expired access token');
+    }
+
     const retryRes = await fetch(url, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(data)
     });
 
+    if (!retryRes.ok) {
+      const errorData = await retryRes.json();
+      throw new Error(errorData.error || 'An error occurred');
+    }
+
     const retryData = retryRes.status === 204 ? null : await retryRes.json();
     return { status: retryRes.status, data: retryData };
+  }
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || 'An error occurred');
   }
 
   const resData = res.status === 204 ? null : await res.json();

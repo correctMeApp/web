@@ -1,24 +1,43 @@
-import Cookies from 'js-cookie';
+// utils/auth-helpers/tokenHandling.ts
 
-export const setTokens = (accessToken: string, refreshToken: string) => {
-  const isSecureContext = process.env.REACT_APP_ENV === 'prod';
+import { serialize } from 'cookie';
 
-  Cookies.set('accessToken', accessToken, { secure: isSecureContext,
+export function setTokens(accessToken: string, refreshToken: string) {
+  const accessTokenCookie = serialize('accessToken', accessToken, {
     httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
-    expires: new Date(Date.now() + 60 * 60 * 1000) });
-  Cookies.set('refreshToken', refreshToken, { secure: isSecureContext, 
+    expires: new Date(Date.now() + 60 * 60 * 1000),
+    path: '/',
+  });
+
+  const refreshTokenCookie = serialize('refreshToken', refreshToken, {
     httpOnly: true,
-    sameSite: 'strict', 
-    expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000)});
-};
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+    path: '/',
+  });
 
-export const wipeTokens = () => {
-  Cookies.remove('accessToken');
-  Cookies.remove('refreshToken');
-};
+  return [accessTokenCookie, refreshTokenCookie];
+}
 
-export const isUserLoggedIn = () => {
-  const accessToken = Cookies.get('accessToken');
-  return !!accessToken;
-};
+export function clearTokens() {
+  const accessTokenCookie = serialize('accessToken', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    expires: new Date(0),
+    path: '/',
+  });
+
+  const refreshTokenCookie = serialize('refreshToken', '', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    expires: new Date(0),
+    path: '/',
+  });
+
+  return [accessTokenCookie, refreshTokenCookie];
+}
