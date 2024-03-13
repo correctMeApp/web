@@ -1,6 +1,5 @@
-import { parse } from 'cookie';
 import { NextRequest } from "next/server";
-import { setTokens } from './auth-helpers/tokenHandling';
+import { cookies } from 'next/headers';
 
 export const getURL = (path: string = '') => {
   // Check if NEXT_PUBLIC_SITE_URL is set and non-empty. Set this to your site URL in production env.
@@ -44,35 +43,43 @@ const getCommonHeaders = () => {
 };
 
 const refreshToken = async (req: NextRequest) => {
-  const cookies = parse(req.headers.get('cookie') || '');
-  const refreshToken = cookies.refreshToken;
+  const currentRefreshToken = cookies().get('refreshToken')?.value
 
   console.log('refreshToken', refreshToken)
 
   try {
     const response = await postData({
       url: getBackendURL('/auth/refresh'),
-      data: { token: refreshToken },
+      data: { token: currentRefreshToken },
       authenticated: false,
       req,
     });
 
-    const { accessToken, refreshToken: newRefreshToken } = response.data;
-
-    const cookies = setTokens(accessToken, newRefreshToken);
-    const headers = new Headers();
-    cookies.forEach(cookie => headers.append('Set-Cookie', cookie));
+    const { accessToken, refreshToken } = response.data;
 
     return new Response(null, {
       status: 204,
-      headers,
+      headers: {
+        ...cookies().set('accessToken', accessToken, { path: '/', httpOnly: true, sameSite: 'strict' }),
+        ...cookies().set('refreshToken', refreshToken, { path: '/', httpOnly: true, sameSite: 'strict' }),
+      }
     });
   } catch (error) {
     if (error instanceof Error) {
-      return new Response(JSON.stringify({ message: error.message }), {status: 500, headers: { 'Content-Type': 'application/json' }})
+      return new Response(JSON.stringify({ message: error.message }),
+       {status: 500,
+        headers: { 'Content-Type': 'application/json' ,
+        ...cookies().set('accessToken', '', { path: '/', expires: new Date(0) }),
+        ...cookies().set('refreshToken', '', { path: '/', expires: new Date(0) })
+        }})
     }
     // If it's not an Error object, return a generic error message
-    return new Response(JSON.stringify({ message: 'An error occurred while refreshing tokens' }), {status: 500, headers: { 'Content-Type': 'application/json' }})
+    return new Response(JSON.stringify({ message: 'An error occurred while refreshing tokens' }),  
+    {status: 500,
+      headers: { 'Content-Type': 'application/json' ,
+      ...cookies().set('accessToken', '', { path: '/', expires: new Date(0) }),
+      ...cookies().set('refreshToken', '', { path: '/', expires: new Date(0) })
+      }})
   }
 };
 
@@ -91,8 +98,13 @@ export const postData = async ({
 
   // If authenticated, add the accessToken from cookies to the headers
   if (authenticated && req) {
-    const cookies = parse(req.headers.get('cookie') || '');
-    const accessToken = cookies.accessToken;
+
+    const accessToken = cookies().get('accessToken')?.value
+    console.log(`postdata accessToken: ${accessToken}`);
+
+    Object.entries(cookies).forEach(([name, value]) => {
+      console.log(`postdata Cookie name: ${name}, Cookie value: ${value}`);
+    });
 
     // Check if the access token exists and if it's in the correct format
     if (accessToken && accessToken.split('.').length === 3) {
@@ -105,7 +117,8 @@ export const postData = async ({
   const res = await fetch(url, {
     method: 'POST',
     headers: headers,
-    body: JSON.stringify(data)
+    body: JSON.stringify(data),
+    credentials: 'same-origin',
   });
 
   if (res.status === 401 && req) {
@@ -113,8 +126,7 @@ export const postData = async ({
     await refreshToken(req);
 
     // Retry the request with the new token from cookies
-    const cookies = parse(req.headers.get('cookie') || '');
-    const accessToken = cookies.accessToken;
+    const accessToken = cookies().get('accessToken')?.value
 
     // Check if the access token exists and if it's in the correct format
     if (accessToken && accessToken.split('.').length === 3) {
@@ -126,7 +138,8 @@ export const postData = async ({
     const retryRes = await fetch(url, {
       method: 'POST',
       headers: headers,
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      credentials: 'same-origin',
     });
 
     if (!retryRes.ok) {

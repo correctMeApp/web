@@ -1,17 +1,16 @@
-// pages/api/verify-otp/route.ts
-
+// pages/api/validateOauthUser/route.ts
 import { getBackendURL, postData } from '@/utils/helpers';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
 export async function POST(req: NextRequest, res: NextResponse) {
   const reqBody = await req.json();
-  const { email, otp } = reqBody;
+  const { email, name, idToken, provider } = reqBody;
 
   try {
     const response = await postData({
-      url: getBackendURL('/auth/verify-otp'),
-      data: { email, otp },
+      url: getBackendURL('/auth/token'),
+      data: { name, email, idToken, provider },
       authenticated: false,
       req,
     });
@@ -23,7 +22,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       headers: {
         ...cookies().set('accessToken', accessToken, { path: '/', httpOnly: true, sameSite: 'strict' }),
         ...cookies().set('refreshToken', refreshToken, { path: '/', httpOnly: true, sameSite: 'strict' }),
-      }
+      },
     });
   } catch (error) {
     if (error instanceof Error) {

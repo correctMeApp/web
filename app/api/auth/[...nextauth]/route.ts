@@ -10,34 +10,29 @@ const handler = NextAuth({
     })
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
-      console.log('signIn', user, account, profile, email, credentials)
-      return true
+    async signIn({ user, account }) {
+      return true;
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl
+      if (url === baseUrl) {
+        return `${baseUrl}/auth/signin?googleSignIn=true`;
+      }
+      return url;
     },
     async session({ session, user, token }) {
-      console.log('session', session, user, token)
-      return session
+      // console.log('session', session, user, token)
+      session.id_token = token.id_token as string;
+      return session;
     },
     async jwt({ token, user, account, profile, isNewUser }) {
-      console.log('jwt', token, user, account, profile, isNewUser)
-      return token
+      // console.log('jwt', token, user, account, profile, isNewUser)
+      if (account?.id_token) {
+        token.id_token = account.id_token;
+      }
+      return token;
     }
   },
-  debug: true,
-  logger: {
-    error(code, metadata) {
-      console.log(code, metadata)
-    },
-    warn(code) {
-        console.log(code)
-    },
-    debug(code, metadata) {
-        console.log(code, metadata)
-    }
-  },
+  debug: false,
   pages: {
     signIn: '/auth/signin',
   }

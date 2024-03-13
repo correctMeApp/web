@@ -6,8 +6,10 @@ import EntryForm from '@/components/ui/AuthForms/EntryForm';
 import Separator from '@/components/ui/AuthForms/Separator';
 import OauthSignIn from '@/components/ui/AuthForms/OauthSignIn';
 import { useState, useEffect } from 'react';
-import { postData, getErrorRedirect } from '@/utils/helpers';
 import { toast } from '@/components/ui/Toasts/use-toast';
+import { useSession } from 'next-auth/react';
+import { getURL } from '@/utils/helpers';
+import { useRouter } from 'next/navigation';
 
 type ToastParams = {
   title: string;
@@ -18,18 +20,47 @@ type ToastParams = {
 export default function SignIn({
   searchParams
 }: {
-  searchParams: { disable_button: boolean };
+  searchParams: { disable_button: boolean, googleSignIn: boolean};
 }) {
   const redirectMethod = getRedirectMethod();
   const { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp } = useOtp();
   const [email, setEmail] = useState('');
   const [toastParams, setToastParams] = useState<ToastParams | null>(null);
+  const router = useRouter();
+  const { data: session } = useSession();
 
   useEffect(() => {
     if (toastParams) {
       toast(toastParams);
     }
-  }, [toastParams]);
+
+    if (searchParams.googleSignIn && session) {
+      fetch(getURL('/api/validateOauthUser'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: session?.user?.email,
+          idToken: session?.id_token,
+          name: session?.user?.name,
+          provider: 'google'
+        }),
+        credentials: 'same-origin',
+      })
+      .then(response => {
+        if (response.ok) {
+          router.push('/');
+        } else {
+          console.log('Failed to validate user');
+          setToastParams({
+            title: 'Oops! Something went wrong.',
+            description: 'Please sign in again with Google',
+            variant: 'destructive'
+          });
+          router.replace('/auth/signin');
+        }
+      });
+    }
+  }, [toastParams, session]);
 
   const handleEmailSubmit = async (e: any, router: any) => {
     e.preventDefault();
@@ -136,12 +167,10 @@ function useOtp() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, otp })
       });
-  
-    console.log('verifyOtp response', response);
 
-    // if (response.status !== 204) {
-    //   throw new Error('Failed to verify OTP');
-    // }
+    if (!response.ok) {
+      throw new Error('Failed to verify OTP');
+    }
   
     return '/';
   };

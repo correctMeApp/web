@@ -23,7 +23,7 @@ export default function OauthSignIn() {
 
   const handleSignIn = (providerName: string) => {
     setIsSubmitting(true);
-    signIn('google', { callbackUrl: 'http://localhost:3000/api/auth/callback/google' });
+    signIn(providerName, { callbackUrl: 'http://localhost:3000/auth/signin?googleSignIn=true' });
   };
 
   return (
