@@ -22,7 +22,12 @@ export default function Navlinks({ user }: NavlinksProps) {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'same-origin',
       });
-      router?.replace('/');
+      if (window.location.pathname === '/') {
+        window.location.reload();
+      } else {
+        router?.replace('/');
+      }
+      
     } catch (error) {
       console.error('Error signing out:', error);
     }
