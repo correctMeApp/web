@@ -3,17 +3,12 @@
 import Link from 'next/link';
 import Logo from '@/components/icons/Logo';
 import { useRouter } from 'next/navigation';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import s from './Navbar.module.css';
 import { useAuth } from '@/app/authContext';
 
-interface NavlinksProps {
-  user?: any;
-}
-
-export default function Navlinks({ user }: NavlinksProps) {
+export default function Navlinks() {
   const { isLoggedIn } = useAuth();
-  const router = getRedirectMethod() === 'client' ? useRouter() : null;
+  const router = useRouter();
 
   const handleSignOut = async ()=> {
     try {
@@ -25,7 +20,7 @@ export default function Navlinks({ user }: NavlinksProps) {
       if (window.location.pathname === '/') {
         window.location.reload();
       } else {
-        router?.replace('/');
+        router.replace('/');
       }
       
     } catch (error) {
@@ -40,25 +35,19 @@ export default function Navlinks({ user }: NavlinksProps) {
           <Logo />
         </Link>
         <nav className="ml-6 space-x-2 lg:block">
-          <Link href="/" className={s.link}>
+          <Link href="/pricing" className={s.link}>
             Pricing
           </Link>
-          {isLoggedIn && (
-            <Link href="/account" className={s.link}>
-              Account
-            </Link>
-          )}
         </nav>
       </div>
       <div className="flex justify-end space-x-8">
-        {isLoggedIn ? (
+        <Link href="/account" className={s.link}>
+          Account
+        </Link>
+        {isLoggedIn && (
           <button onClick={handleSignOut} className={s.link}>
           Sign out
         </button>
-        ) : (
-          <Link href="/auth/signin" className={s.link}>
-            Sign In
-          </Link>
         )}
       </div>
     </div>

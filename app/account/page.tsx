@@ -1,34 +1,21 @@
+'use client'
 import CustomerPortalForm from '@/components/ui/AccountForms/CustomerPortalForm';
 import EmailForm from '@/components/ui/AccountForms/EmailForm';
 import NameForm from '@/components/ui/AccountForms/NameForm';
-import { createClient } from '@/utils/supabase/server';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/app/authContext';
+import { useEffect } from 'react';
 
 export default async function Account() {
-  const supabase = createClient();
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
 
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-
-  const { data: userDetails } = await supabase
-    .from('users')
-    .select('*')
-    .single();
-
-  const { data: subscription, error } = await supabase
-    .from('subscriptions')
-    .select('*, prices(*, products(*))')
-    .in('status', ['trialing', 'active'])
-    .maybeSingle();
-
-  if (error) {
-    console.log(error);
-  }
-
-  if (!user) {
-    return redirect('/auth/signin');
-  }
+  useEffect(() => {
+    console.log('I AM ON THE ACCOUNT PAGE AND THE USER IS', isLoggedIn)
+    if (!isLoggedIn) {
+      router.push('/auth/signin');
+    }
+  }, [isLoggedIn, router]);
 
   return (
     <section className="mb-32 bg-slate-900">
@@ -43,9 +30,9 @@ export default async function Account() {
         </div>
       </div>
       <div className="p-4">
-        <CustomerPortalForm subscription={subscription} />
-        <NameForm userName={userDetails?.full_name ?? ''} />
-        <EmailForm userEmail={user.email} />
+        {/* <CustomerPortalForm subscription={subscription} /> */}
+        {/* <NameForm userName={userDetails?.full_name ?? ''} />
+        <EmailForm userEmail={'email'} /> */}
       </div>
     </section>
   );

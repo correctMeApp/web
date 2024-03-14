@@ -1,56 +1,40 @@
 'use client';
 
 import Button from '@/components/ui/Button';
-import type { Tables } from '@/types_db';
 import { getStripe } from '@/utils/stripe/client';
 import { checkoutWithStripe } from '@/utils/stripe/server';
 import { getErrorRedirect } from '@/utils/helpers';
-import { User } from '@supabase/supabase-js';
 import cn from 'classnames';
 import { useRouter, usePathname } from 'next/navigation';
 import { useState } from 'react';
-
-type Subscription = Tables<'subscriptions'>;
-type Product = Tables<'products'>;
-type Price = Tables<'prices'>;
-interface ProductWithPrices extends Product {
-  prices: Price[];
-}
-interface PriceWithProduct extends Price {
-  products: Product | null;
-}
-interface SubscriptionWithProduct extends Subscription {
-  prices: PriceWithProduct | null;
-}
+import { Price, Product, PricingPlanInterval } from '@/app/types/models';
+import { useAuth } from '@/app/authContext';
 
 interface Props {
-  user: User | null | undefined;
-  products: ProductWithPrices[];
-  subscription: SubscriptionWithProduct | null;
+  product: Product;
+  prices: Price[];
 }
 
-type BillingInterval = 'lifetime' | 'year' | 'month';
+export default function Pricing({ product, prices }: Props) {
+  const { isLoggedIn } = useAuth();
 
-export default function Pricing({ user, products, subscription }: Props) {
   const intervals = Array.from(
     new Set(
-      products.flatMap((product) =>
-        product?.prices?.map((price) => price?.interval)
-      )
+      prices.map(price => price.interval)
     )
   );
   const router = useRouter();
   const [billingInterval, setBillingInterval] =
-    useState<BillingInterval>('month');
+    useState<PricingPlanInterval>(PricingPlanInterval.Year);
   const [priceIdLoading, setPriceIdLoading] = useState<string>();
   const currentPath = usePathname();
 
   const handleStripeCheckout = async (price: Price) => {
     setPriceIdLoading(price.id);
 
-    if (!user) {
+    if (!isLoggedIn) {
       setPriceIdLoading(undefined);
-      return router.push('/signin/signup');
+      return router.push('/auth/signin');
     }
 
     const { errorRedirect, sessionId } = await checkoutWithStripe(
@@ -80,7 +64,7 @@ export default function Pricing({ user, products, subscription }: Props) {
     setPriceIdLoading(undefined);
   };
 
-  if (!products.length) {
+  if (!product) {
     return (
       <section className="bg-slate-900">
         <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
@@ -106,62 +90,57 @@ export default function Pricing({ user, products, subscription }: Props) {
         <div className="max-w-6xl px-4 py-8 mx-auto sm:py-24 sm:px-6 lg:px-8">
           <div className="sm:flex sm:flex-col sm:align-center">
             <h1 className="text-4xl font-extrabold text-white sm:text-center sm:text-6xl">
-              Pricing Plans
+              Pricing
             </h1>
             <p className="max-w-2xl m-auto mt-5 text-xl text-zinc-200 sm:text-center sm:text-2xl">
-              Start building for free, then add a site plan to go live. Account
-              plans unlock additional features.
+              Start trying for free, supercharge your writing immediately.
             </p>
-            <div className="relative self-center mt-6 bg-zinc-900 rounded-lg p-0.5 flex sm:mt-8 border border-zinc-800">
-              {intervals.includes('month') && (
+            <div className="relative self-center mt-6 bg-slate-950 rounded-lg p-0.5 flex sm:mt-8 border border-zinc-800">
+              {intervals.includes(PricingPlanInterval.Month) && (
                 <button
-                  onClick={() => setBillingInterval('month')}
+                  onClick={() => setBillingInterval(PricingPlanInterval.Month)}
                   type="button"
                   className={`${
                     billingInterval === 'month'
-                      ? 'relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white'
+                      ? 'relative w-1/2 bg-gray-800 border-zinc-800 shadow-sm text-white'
                       : 'ml-0.5 relative w-1/2 border border-transparent text-zinc-400'
                   } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
                 >
-                  Monthly billing
+                  Monthly
                 </button>
               )}
-              {intervals.includes('year') && (
+              {intervals.includes(PricingPlanInterval.Year) && (
                 <button
-                  onClick={() => setBillingInterval('year')}
+                  onClick={() => setBillingInterval(PricingPlanInterval.Year)}
                   type="button"
                   className={`${
                     billingInterval === 'year'
-                      ? 'relative w-1/2 bg-zinc-700 border-zinc-800 shadow-sm text-white'
+                      ? 'relative w-1/2 bg-gray-800 border-zinc-800 shadow-sm text-white'
                       : 'ml-0.5 relative w-1/2 border border-transparent text-zinc-400'
                   } rounded-md m-1 py-2 text-sm font-medium whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-opacity-50 focus:z-10 sm:w-auto sm:px-8`}
                 >
-                  Yearly billing
+                  Yearly
                 </button>
               )}
             </div>
           </div>
           <div className="mt-12 space-y-4 sm:mt-16 sm:space-y-0 flex flex-wrap justify-center gap-6 lg:max-w-4xl lg:mx-auto xl:max-w-none xl:mx-0">
-            {products.map((product) => {
-              const price = product?.prices?.find(
-                (price) => price.interval === billingInterval
-              );
-              if (!price) return null;
+            {prices.map((price) => {
+              if (price.interval !== billingInterval) return null;
+              if (price.product_id !== product.id) return null;
+              const priceAmount = price?.unit_amount || 0;
+              const formattedPriceAmount = billingInterval === PricingPlanInterval.Year ? priceAmount / 12 : priceAmount;
+
               const priceString = new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: price.currency!,
                 minimumFractionDigits: 0
-              }).format((price?.unit_amount || 0) / 100);
+              }).format(formattedPriceAmount / 100);
               return (
                 <div
                   key={product.id}
                   className={cn(
-                    'flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-zinc-900',
-                    {
-                      'border border-pink-500': subscription
-                        ? product.name === subscription?.prices?.products?.name
-                        : product.name === 'Freelancer'
-                    },
+                    'flex flex-col rounded-lg shadow-sm divide-y divide-zinc-600 bg-gray-800',
                     'flex-1', // This makes the flex item grow to fill the space
                     'basis-1/3', // Assuming you want each card to take up roughly a third of the container's width
                     'max-w-xs' // Sets a maximum width to the cards to prevent them from getting too large
@@ -177,7 +156,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                         {priceString}
                       </span>
                       <span className="text-base font-medium text-zinc-100">
-                        /{billingInterval}
+                        /month
                       </span>
                     </p>
                     <Button
@@ -187,7 +166,7 @@ export default function Pricing({ user, products, subscription }: Props) {
                       onClick={() => handleStripeCheckout(price)}
                       className="block w-full py-2 mt-8 text-sm font-semibold text-center text-white rounded-md hover:bg-zinc-900"
                     >
-                      {subscription ? 'Manage' : 'Subscribe'}
+                      {'Try for free'}
                     </Button>
                   </div>
                 </div>
