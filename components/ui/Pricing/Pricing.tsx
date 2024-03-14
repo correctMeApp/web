@@ -2,7 +2,6 @@
 
 import Button from '@/components/ui/Button';
 import { getStripe } from '@/utils/stripe/client';
-import { checkoutWithStripe } from '@/utils/stripe/server';
 import { getErrorRedirect } from '@/utils/helpers';
 import cn from 'classnames';
 import { useRouter, usePathname } from 'next/navigation';
@@ -31,36 +30,54 @@ export default function Pricing({ product, prices }: Props) {
 
   const handleStripeCheckout = async (price: Price) => {
     setPriceIdLoading(price.id);
-
+  
     if (!isLoggedIn) {
       setPriceIdLoading(undefined);
       return router.push('/auth/signin');
     }
 
-    const { errorRedirect, sessionId } = await checkoutWithStripe(
-      price,
-      currentPath
-    );
+    const userResponse = await fetch('/api/user/profile', {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include'
+    });
 
-    if (errorRedirect) {
-      setPriceIdLoading(undefined);
-      return router.push(errorRedirect);
-    }
+    const user = await userResponse.json();
 
-    if (!sessionId) {
+    if (userResponse.status !== 200) {
       setPriceIdLoading(undefined);
       return router.push(
         getErrorRedirect(
           currentPath,
-          'An unknown error occurred.',
-          'Please try again later or contact a system administrator.'
+          'Failed to fetch the user',
+          'Please try again later.'
         )
       );
     }
-
+  
+    const response = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user, price, redirectPath: currentPath }),
+      credentials: 'include'
+    });
+  
+    const { sessionId } = await response.json();
+  
+    if (!sessionId || response.status !== 200) {
+      setPriceIdLoading(undefined);
+      return router.push(
+        getErrorRedirect(
+          currentPath,
+          'Failed to create stripe session',
+          'Please try again later.'
+        )
+      );
+    }
+  
     const stripe = await getStripe();
     stripe?.redirectToCheckout({ sessionId });
-
+  
     setPriceIdLoading(undefined);
   };
 

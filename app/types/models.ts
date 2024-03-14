@@ -50,9 +50,20 @@ export interface Price {
 export interface User {
   avatar_url: string | null;
   billing_address: JSON | null;
-  full_name: string | null;
   id: string;
+  name: string;
+  email: string;
+  provider: string;
   payment_method: JSON | null;
+  subscriptionType: UserSubscriptionInfo;
+  stripeCustomerId: string | null;
+}
+
+export interface UserSubscriptionInfo {
+  type: UserType;
+  expirationDate: string | null;
+  remainingUsage: number;
+  _id: string;
 }
 
 // Enums
@@ -75,4 +86,11 @@ export enum SubscriptionStatus {
   PastDue = 'past_due',
   Unpaid = 'unpaid',
   Paused = 'paused'
+}
+
+export enum UserType {
+  ADMIN = 'ADMIN',
+  TRIAL = 'TRIAL',
+  PAID = 'PAID',
+  // Add other user types here
 }

@@ -190,3 +190,78 @@ export const getData = async ({
   const resData = res.status === 204 ? null : await res.json();
   return { status: res.status, data: resData };
 };
+
+export const putData = async ({
+  url,
+  data,
+  authenticated = true,
+  req
+}: {
+  url: string;
+  data?: Record<string, unknown>;
+  authenticated?: boolean;
+  req?: NextRequest;
+}) => {
+  const headers = getCommonHeaders();
+
+  // If authenticated, add the accessToken from cookies to the headers
+  if (authenticated && req) {
+    const accessToken = cookies().get('accessToken')?.value
+
+    // Check if the access token exists and if it's in the correct format
+    if (accessToken && accessToken.split('.').length === 3) {
+      headers.append('Authorization', `Bearer ${accessToken}`);
+    } else {
+      throw new Error('Invalid or expired access token');
+    }
+  }
+
+  const res = await fetch(url, {
+    method: 'PUT',
+    headers: headers,
+    body: JSON.stringify(data),
+    credentials: 'include',
+  });
+
+  if (res.status === 401 && req) {
+    // Refresh the token
+    const refreshRes = await refreshToken(req);
+
+    if (!refreshRes.ok) {
+      return { status: 401, data: null };
+    }
+
+    // Retry the request with the new token from cookies
+    const accessToken = cookies().get('accessToken')?.value
+
+    // Check if the access token exists and if it's in the correct format
+    if (accessToken && accessToken.split('.').length === 3) {
+      headers.append('Authorization', `Bearer ${accessToken}`);
+    } else {
+      throw new Error('Invalid or expired access token');
+    }
+
+    const retryRes = await fetch(url, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(data),
+      credentials: 'include',
+    });
+
+    if (!retryRes.ok) {
+      const errorData = await retryRes.json();
+      throw new Error(errorData.error || 'An error occurred');
+    }
+
+    const retryData = retryRes.status === 204 ? null : await retryRes.json();
+    return { status: retryRes.status, data: retryData };
+  }
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || 'An error occurred');
+  }
+
+  const resData = res.status === 204 ? null : await res.json();
+  return { status: res.status, data: resData };
+};
