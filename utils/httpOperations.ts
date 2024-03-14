@@ -2,6 +2,7 @@
 import { NextRequest } from "next/server";
 import { cookies } from 'next/headers';
 import { getBackendURL } from "./helpers";
+import { ok } from "assert";
 
 const getCommonHeaders = () => {
   return new Headers({ 'Content-Type': 'application/json', 'x-client-type': 'web'});
@@ -20,7 +21,7 @@ const refreshToken = async (req: NextRequest) => {
 
     const { accessToken, refreshToken } = response.data;
 
-    return new Response(null, {
+    return new Response('ok', {
       status: 204,
       headers: {
         ...cookies().set('accessToken', accessToken, { path: '/', httpOnly: true, sameSite: 'strict' }),
@@ -81,7 +82,11 @@ export const postData = async ({
 
   if (res.status === 401 && req) {
     // Refresh the token
-    await refreshToken(req);
+    const refreshRes = await refreshToken(req);
+
+    if (!refreshRes.ok) {
+      return { status: 401, data: null };
+    }
 
     // Retry the request with the new token from cookies
     const accessToken = cookies().get('accessToken')?.value

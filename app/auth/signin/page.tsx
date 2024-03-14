@@ -26,6 +26,7 @@ export default function SignIn({
   const { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp } = useOtp();
   const [email, setEmail] = useState('');
   const [toastParams, setToastParams] = useState<ToastParams | null>(null);
+  const [hasValidatedUser, setHasValidatedUser] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
 
@@ -34,7 +35,8 @@ export default function SignIn({
       toast(toastParams);
     }
 
-    if (searchParams.googleSignIn && session) {
+    if (searchParams.googleSignIn && session && !hasValidatedUser) {
+      setHasValidatedUser(true);
       fetch(getURL('/api/validateOauthUser'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
