@@ -11,7 +11,6 @@ export default async function Account() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log('I AM ON THE ACCOUNT PAGE AND THE USER IS', isLoggedIn)
     if (!isLoggedIn) {
       router.push('/auth/signin');
     }
