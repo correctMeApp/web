@@ -1,6 +1,7 @@
 // pages/api/request-otp/route.ts
 
-import { getBackendURL, postData } from '@/utils/helpers';
+import { getBackendURL } from '@/utils/helpers';
+import { postData } from '@/utils/postData';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(req: NextRequest, res: NextResponse) {

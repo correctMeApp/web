@@ -1,5 +1,6 @@
 // pages/api/validateOauthUser/route.ts
-import { getBackendURL, postData } from '@/utils/helpers';
+import { getBackendURL } from '@/utils/helpers';
+import { postData } from '@/utils/postData';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
