@@ -1,6 +1,6 @@
 // pages/api/validateOauthUser/route.ts
 import { getBackendURL } from '@/utils/helpers';
-import { postData } from '@/utils/postData';
+import { postData } from '@/utils/httpOperations';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
@@ -30,6 +30,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       return new Response(JSON.stringify({ message: error.message }), {status: 500, headers: { 'Content-Type': 'application/json' }})
     }
     // If it's not an Error object, return a generic error message
-    return new Response(JSON.stringify({ message: 'An error occurred while verifying OTP' }), {status: 500, headers: { 'Content-Type': 'application/json' }})
+    return new Response(JSON.stringify({ message: 'An error occurred while verifying the oauth user' }), {status: 500, headers: { 'Content-Type': 'application/json' }})
   }
 }

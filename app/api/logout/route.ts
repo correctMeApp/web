@@ -1,7 +1,7 @@
 // pages/api/logout/route.ts
 
 import { getBackendURL } from '@/utils/helpers';
-import { postData } from '@/utils/postData';
+import { postData } from '@/utils/httpOperations';
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 

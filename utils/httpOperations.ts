@@ -76,7 +76,7 @@ export const postData = async ({
     method: 'POST',
     headers: headers,
     body: JSON.stringify(data),
-    credentials: 'same-origin',
+    credentials: 'include',
   });
 
   if (res.status === 401 && req) {
@@ -97,7 +97,75 @@ export const postData = async ({
       method: 'POST',
       headers: headers,
       body: JSON.stringify(data),
-      credentials: 'same-origin',
+      credentials: 'include',
+    });
+
+    if (!retryRes.ok) {
+      const errorData = await retryRes.json();
+      throw new Error(errorData.error || 'An error occurred');
+    }
+
+    const retryData = retryRes.status === 204 ? null : await retryRes.json();
+    return { status: retryRes.status, data: retryData };
+  }
+
+  if (!res.ok) {
+    const errorData = await res.json();
+    throw new Error(errorData.error || 'An error occurred');
+  }
+
+  const resData = res.status === 204 ? null : await res.json();
+  return { status: res.status, data: resData };
+};
+
+export const getData = async ({
+  url,
+  authenticated = true,
+  req
+}: {
+  url: string;
+  authenticated?: boolean;
+  req?: NextRequest;
+}) => {
+  const headers = getCommonHeaders();
+
+  // If authenticated, add the accessToken from cookies to the headers
+  if (authenticated && req) {
+    const accessToken = cookies().get('accessToken')?.value
+
+    // Check if the access token exists and if it's in the correct format
+    if (accessToken && accessToken.split('.').length === 3) {
+      headers.append('Authorization', `Bearer ${accessToken}`);
+    } else {
+      console.log('Invalid or expired access token');
+      throw new Error('Invalid or expired access token');
+    }
+  }
+
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: headers,
+    credentials: 'include',
+  });
+
+  if (res.status === 401 && req) {
+    // Refresh the token
+    await refreshToken(req);
+
+    // Retry the request with the new token from cookies
+    const accessToken = cookies().get('accessToken')?.value
+
+    // Check if the access token exists and if it's in the correct format
+    if (accessToken && accessToken.split('.').length === 3) {
+      headers.append('Authorization', `Bearer ${accessToken}`);
+    } else {
+      throw new Error('Invalid or expired access token');
+    }
+
+    const retryRes = await fetch(url, {
+      method: 'GET',
+      headers: headers,
+      credentials: 'include',
     });
 
     if (!retryRes.ok) {
