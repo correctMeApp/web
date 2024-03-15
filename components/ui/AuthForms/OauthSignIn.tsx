@@ -4,6 +4,7 @@ import Button from '@/components/ui/Button';
 import { signIn } from 'next-auth/react'
 import { FcGoogle } from 'react-icons/fc';
 import { useState } from 'react';
+import { getURL } from '@/utils/helpers';
 
 type OAuthProviders = {
   name: string;
@@ -23,7 +24,7 @@ export default function OauthSignIn() {
 
   const handleSignIn = (providerName: string) => {
     setIsSubmitting(true);
-    signIn(providerName, { callbackUrl: 'http://localhost:3000/auth/signin?googleSignIn=true' });
+    signIn(providerName, { callbackUrl: getURL('/auth/signin?googleSignIn=true') });
   };
 
   return (
