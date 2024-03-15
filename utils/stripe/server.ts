@@ -1,40 +1,18 @@
 import { stripe } from '@/utils/stripe/config';
-import { createClient } from '@/utils/supabase/server';
-import {
-  getURL,
-  getErrorRedirect
-} from '@/utils/helpers';
+import { getURL, getErrorRedirect } from '@/utils/helpers';
+import { cookies } from 'next/headers';
 
-
-export async function createStripePortal(currentPath: string) {
+export async function createStripePortal(currentPath: string, user: { email: string, stripeCustomerId?: string }) {
   try {
-    const supabase = createClient();
-    const {
-      error,
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      if (error) {
-        console.error(error);
+    let customer: string;
+      try {
+        customer = await createOrRetrieveCustomer({
+          email: user?.email || '',
+          stripeCustomerId: user?.stripeCustomerId || ''
+        });
+      } catch (err) {
+        throw new Error('Unable to access customer record.' );
       }
-      throw new Error('Could not get user session.');
-    }
-
-    let customer;
-    try {
-      customer = await createOrRetrieveCustomer({
-        uuid: user.id || '',
-        email: user.email || ''
-      });
-    } catch (err) {
-      console.error(err);
-      throw new Error('Unable to access customer record.');
-    }
-
-    if (!customer) {
-      throw new Error('Could not get customer.');
-    }
 
     try {
       const { url } = await stripe.billingPortal.sessions.create({
@@ -67,82 +45,72 @@ export async function createStripePortal(currentPath: string) {
   }
 }
 
-const createOrRetrieveCustomer = async ({
-  email,
-  uuid,
-  stripeCustomerId
-}: {
-  email: string;
-  uuid: string;
-  stripeCustomerId?: string | null;
-}) => {
-
-  var existingStripeCustomerId;
-  // Retrieve the Stripe customer ID using the uuid, with email fallback
-  if (stripeCustomerId) {
-    const existingStripeCustomer = await stripe.customers.retrieve(stripeCustomerId);
-    existingStripeCustomerId = existingStripeCustomer.id;
-  } else {
-    // If Stripe ID is missing from the user, try to retrieve Stripe customer ID by email
-    const stripeCustomers = await stripe.customers.list({ email: email });
-    existingStripeCustomerId =
-      stripeCustomers.data.length > 0 ? stripeCustomers.data[0].id : undefined;
-  }
-
-  console.log('existingStripeCustomerId', existingStripeCustomerId);
-
-  // If still no stripeCustomerId, create a new customer in Stripe
-  const stripeIdToInsert = existingStripeCustomerId
-    ? existingStripeCustomerId
-    : await createCustomerInStripe(uuid, email);
-  if (!stripeIdToInsert) throw new Error('Stripe customer creation failed.');
-
-  if (existingStripeCustomerId) {
-    // If Supabase has a record but doesn't match Stripe, update Supabase record
-    if (existingStripeCustomerId !== stripeCustomerId) {
-      const response = await fetch('/api/updateStripeId', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email,
-          stripeCustomerId: stripeCustomerId
-        }),
-        credentials: 'include'
-      });
-      
-      if (!response.ok) {
-        const responseData = await response.json();
-        throw new Error(`User record update failed: ${responseData.error}`);
-      }
-      console.warn(
-        `User record mismatched Stripe ID. User record updated.`
-      );
-    }
-    // If Supabase has a record and matches Stripe, return Stripe customer ID
-    return existingStripeCustomerId;
-  } else {
-    console.warn(
-      `Supabase customer record was missing. A new record was created.`
-    );
-
-    console.log('stripeIdToInsert', stripeIdToInsert);
-
-    // If Supabase has no record, create a new record and return Stripe customer ID
-    // const upsertedStripeCustomer = await upsertCustomerToSupabase(
-    //   uuid,
-    //   stripeIdToInsert
-    // );
-    // if (!upsertedStripeCustomer)
-    //   throw new Error('Supabase customer record creation failed.');
-
-    return stripeIdToInsert;
-  }
-};
-
-const createCustomerInStripe = async (uuid: string, email: string) => {
-  const customerData = { metadata: { supabaseUUID: uuid }, email: email };
+export async function createCustomerInStripe(email: string) {
+  const customerData = { email: email };
   const newCustomer = await stripe.customers.create(customerData);
   if (!newCustomer) throw new Error('Stripe customer creation failed.');
 
   return newCustomer.id;
 };
+
+export async function createOrRetrieveCustomer({ email, stripeCustomerId }: { email: string; stripeCustomerId: string; }) {
+  var existingStripeCustomerId;
+  console.log('cookie exists', cookies().get('accessToken')?.value);
+  // Retrieve the Stripe customer ID using the uuid, with email fallback
+  if (stripeCustomerId) {
+      const existingStripeCustomer = await stripe.customers.retrieve(stripeCustomerId);
+      existingStripeCustomerId = existingStripeCustomer.id;
+  } else {
+      // If Stripe ID is missing from the user, try to retrieve Stripe customer ID by email
+      const stripeCustomers = await stripe.customers.list({ email: email });
+      existingStripeCustomerId =
+      stripeCustomers.data.length > 0 ? stripeCustomers.data[0].id : undefined;
+  }
+
+  // If still no stripeCustomerId, create a new customer in Stripe
+  const stripeIdToInsert = existingStripeCustomerId
+      ? existingStripeCustomerId
+      : await createCustomerInStripe(email);
+  if (!stripeIdToInsert) throw new Error('Stripe customer creation failed.');
+
+  if (existingStripeCustomerId) {
+      // If user exists doesn't match Stripe, update user
+      if (existingStripeCustomerId !== stripeCustomerId) {
+          const accessToken = cookies().get('accessToken')?.value
+          const response = await fetch(getURL('/api/user/updateStripeId'), {
+              method: 'PUT',
+              headers: { 
+                  'Content-Type': 'application/json',
+                  'Cookie': `accessToken=${accessToken};` 
+              },
+              body: JSON.stringify({
+              email: email,
+              stripeCustomerId: existingStripeCustomerId
+              }),
+              credentials: 'include'
+          });
+        
+        if (!response.ok) {
+          const responseData = await response.json();
+          throw new Error(`User record update failed: ${responseData.error}`);
+        }
+      }
+      return existingStripeCustomerId;
+  } else {
+      throw new Error('User not exist.');
+  }
+};
+
+export async function retrieveSubscription(subscriptionId: string) {
+  try {
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+    return subscription;
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(`Error retrieving subscription ${subscriptionId}: `, error);
+      throw new Error(`Failed to retrieve subscription from Stripe: ${error.message}`);
+    } else {
+      throw new Error('Failed to retrieve subscription from Stripe');
+    }
+  }
+}
