@@ -15,9 +15,6 @@ const handler = NextAuth({
       return true;
     },
     async redirect({ url, baseUrl }) {
-      if (url === baseUrl) {
-        return `${baseUrl}/auth/signin?googleSignIn=true`;
-      }
       return url;
     },
     async session({ session, user, token }) {
