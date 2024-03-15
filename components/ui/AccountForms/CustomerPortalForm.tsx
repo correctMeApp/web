@@ -6,25 +6,14 @@ import { useState } from 'react';
 import { createStripePortal } from '@/utils/stripe/server';
 import Link from 'next/link';
 import Card from '@/components/ui/Card';
-import { Tables } from '@/types_db';
-
-type Subscription = Tables<'subscriptions'>;
-type Price = Tables<'prices'>;
-type Product = Tables<'products'>;
-
-type SubscriptionWithPriceAndProduct = Subscription & {
-  prices:
-    | (Price & {
-        products: Product | null;
-      })
-    | null;
-};
+import Stripe from 'stripe';
 
 interface Props {
-  subscription: SubscriptionWithPriceAndProduct | null;
+  subscription: Stripe.Subscription | null,
+  user: { email: string, name?: string, subscription: { stripdeId?: string } }
 }
 
-export default function CustomerPortalForm({ subscription }: Props) {
+export default function CustomerPortalForm({ user, subscription }: Props) {
   const router = useRouter();
   const currentPath = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,45 +22,57 @@ export default function CustomerPortalForm({ subscription }: Props) {
     subscription &&
     new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: subscription?.prices?.currency!,
+      currency: subscription?.items.data[0].price.currency.toUpperCase(),
       minimumFractionDigits: 0
-    }).format((subscription?.prices?.unit_amount || 0) / 100);
+    }).format((subscription?.items?.data[0].price.unit_amount || 0) / 100);
 
-  const handleStripePortalRequest = async () => {
-    setIsSubmitting(true);
-    const redirectUrl = await createStripePortal(currentPath);
-    setIsSubmitting(false);
-    return router.push(redirectUrl);
-  };
+    const handleStripePortalRequest = () => {
+      setIsSubmitting(true);
+      createStripePortal(currentPath, user)
+        .then(redirectUrl => {
+          setIsSubmitting(false);
+          router.push(redirectUrl);
+        })
+        .catch(error => {
+          setIsSubmitting(false);
+          console.error('Failed to create Stripe portal: ', error);
+        });
+    };
 
   return (
     <Card
       title="Your Plan"
       description={
         subscription
-          ? `You are currently on the ${subscription?.prices?.products?.name} plan.`
+          ? 'Manage your subscription on Stripe Customer Portal'
           : 'You are not currently subscribed to any plan.'
       }
       footer={
-        <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
-          <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
-          <Button
-            variant="slim"
-            onClick={handleStripePortalRequest}
-            loading={isSubmitting}
-          >
-            Open customer portal
-          </Button>
-        </div>
+        subscription ? (
+          <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
+            <p className="pb-4 sm:pb-0">Manage your subscription on Stripe.</p>
+            <Button
+              variant="slim"
+              onClick={handleStripePortalRequest}
+              loading={isSubmitting}
+            >
+              Open customer portal
+            </Button>
+          </div>
+        ) : (
+          <div className="flex flex-col items-start justify-between sm:flex-row sm:items-center">
+            <p className="pb-4 sm:pb-0">See our pricing options</p>
+            <Button
+              variant="slim"
+              onClick={() => router.push('/pricing')}
+            >
+              Choose your plan
+            </Button>
+          </div>
+        )
       }
     >
-      <div className="mt-8 mb-4 text-xl font-semibold">
-        {subscription ? (
-          `${subscriptionPrice}/${subscription?.prices?.interval}`
-        ) : (
-          <Link href="/">Choose your plan</Link>
-        )}
-      </div>
+      <></>
     </Card>
   );
 }
