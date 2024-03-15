@@ -35,7 +35,7 @@ export default function SignIn({
       toast(toastParams);
     }
 
-    console.log('useEffect values', searchParams, session, hasValidatedUser);
+    console.log('useEffect values', searchParams.googleSignIn, session, hasValidatedUser);
 
     if (searchParams.googleSignIn && session && !hasValidatedUser) {
       setHasValidatedUser(true);
