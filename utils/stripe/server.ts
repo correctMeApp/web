@@ -55,7 +55,6 @@ export async function createCustomerInStripe(email: string) {
 
 export async function createOrRetrieveCustomer({ email, stripeCustomerId }: { email: string; stripeCustomerId: string; }) {
   var existingStripeCustomerId;
-  console.log('cookie exists', cookies().get('accessToken')?.value);
   // Retrieve the Stripe customer ID using the uuid, with email fallback
   if (stripeCustomerId) {
       const existingStripeCustomer = await stripe.customers.retrieve(stripeCustomerId);
@@ -100,17 +99,3 @@ export async function createOrRetrieveCustomer({ email, stripeCustomerId }: { em
       throw new Error('User not exist.');
   }
 };
-
-export async function retrieveSubscription(subscriptionId: string) {
-  try {
-    const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-    return subscription;
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(`Error retrieving subscription ${subscriptionId}: `, error);
-      throw new Error(`Failed to retrieve subscription from Stripe: ${error.message}`);
-    } else {
-      throw new Error('Failed to retrieve subscription from Stripe');
-    }
-  }
-}

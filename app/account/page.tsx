@@ -5,18 +5,14 @@ import NameForm from '@/components/ui/AccountForms/NameForm';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/authContext';
 import { useEffect, useState } from 'react';
-import { retrieveSubscription } from '@/utils/stripe/server';
-import Stripe from 'stripe';
 
 export default function Account() {
   const { isLoggedIn } = useAuth();
   const router = useRouter();
-  const [subscription, setSubscription] = useState<Stripe.Subscription | null>(null);
   const [user, setUser] = useState<{ 
     email: string,
     name?: string,
-    subscription: { stripdeId?: string },
-    stripeCustomerId?: String | null
+    subscription: { stripeId?: string, expirationDate?: string, type: string }
      } | null>(null);
 
   useEffect(() => {
@@ -29,12 +25,6 @@ export default function Account() {
       .then(response => response.json())
       .then((user) => {
         setUser(user);
-        if (user.subscription?.stripeId) {
-          // Fetch subscription from Stripe
-          retrieveSubscription(user.subscription.stripeId)
-            .then(subscription => setSubscription(subscription))
-            .catch(error => console.error('Failed to retrieve subscription: ', error));
-        }
       })
       .catch(error => console.error('Failed to fetch user profile: ', error));
   }
@@ -55,7 +45,7 @@ export default function Account() {
           </div>
         </div>
         <div className="p-4">
-          {user && <CustomerPortalForm subscription={subscription} user={user} />}
+          {user && <CustomerPortalForm user={user} />}
           <NameForm userName={user?.name ?? ''} />
           <EmailForm userEmail={user?.email} />
         </div>

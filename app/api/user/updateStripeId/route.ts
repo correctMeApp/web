@@ -2,7 +2,6 @@
 
 import { getBackendURL } from '@/utils/helpers';
 import { putData } from '@/utils/httpOperations';
-import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PUT(req: NextRequest, res: NextResponse) {
