@@ -155,7 +155,11 @@ export const getData = async ({
 
   if (res.status === 401 && req) {
     // Refresh the token
-    await refreshToken(req);
+    const refreshRes = await refreshToken(req);
+
+    if (!refreshRes.ok) {
+      return { status: 401, data: null };
+    }
 
     // Retry the request with the new token from cookies
     const accessToken = cookies().get('accessToken')?.value

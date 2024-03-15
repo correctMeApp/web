@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import Logo from '@/components/icons/Logo';
+import ClickableElement from './ClickableElement';
 
 export default function Footer() {
   return (
@@ -35,22 +36,6 @@ export default function Footer() {
                 About
               </Link>
             </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Careers
-              </Link>
-            </li>
-            <li className="py-3 md:py-0 md:pb-4">
-              <Link
-                href="/"
-                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
-              >
-                Blog
-              </Link>
-            </li>
           </ul>
         </div>
         <div className="col-span-1 lg:col-span-2">
@@ -69,11 +54,14 @@ export default function Footer() {
               </Link>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
+              <ClickableElement />
+            </li>
+            <li className="py-3 md:py-0 md:pb-4">
               <Link
                 href="/"
                 className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
               >
-                Terms of Use
+                Imprint
               </Link>
             </li>
           </ul>
@@ -84,7 +72,7 @@ export default function Footer() {
       <div className="px-6 flex flex-col items-center justify-between py-12 space-y-4 md:flex-row bg-slate-950">
         <div>
           <span>
-            &copy; {new Date().getFullYear()} ACME, Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} CorrectMe, Inc. All rights reserved.
           </span>
         </div>
         <div className="flex items-center">

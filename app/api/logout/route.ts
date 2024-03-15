@@ -13,8 +13,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       req,
     });
 
-    // clearTokens();
-
     return new Response(null, {
       status: 204,
       headers: {
