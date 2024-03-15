@@ -1,7 +1,6 @@
 import Link from 'next/link';
 
 import Logo from '@/components/icons/Logo';
-import ClickableElement from './ClickableElement';
 
 export default function Footer() {
   return (
@@ -54,7 +53,12 @@ export default function Footer() {
               </Link>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
-              <ClickableElement />
+              <Link
+                href="/"
+                className="text-white transition duration-150 ease-in-out hover:text-zinc-200"
+              >
+                Terms of Use
+              </Link>
             </li>
             <li className="py-3 md:py-0 md:pb-4">
               <Link
