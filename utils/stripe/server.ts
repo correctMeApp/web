@@ -73,29 +73,35 @@ export async function createOrRetrieveCustomer({ email, stripeCustomerId }: { em
   if (!stripeIdToInsert) throw new Error('Stripe customer creation failed.');
 
   if (existingStripeCustomerId) {
-      // If user exists doesn't match Stripe, update user
-      if (existingStripeCustomerId !== stripeCustomerId) {
-          const accessToken = cookies().get('accessToken')?.value
-          const response = await fetch(getURL('/api/user/updateStripeId'), {
-              method: 'PUT',
-              headers: { 
-                  'Content-Type': 'application/json',
-                  'Cookie': `accessToken=${accessToken};` 
-              },
-              body: JSON.stringify({
-              email: email,
-              stripeCustomerId: existingStripeCustomerId
-              }),
-              credentials: 'include'
-          });
-        
-        if (!response.ok) {
-          const responseData = await response.json();
-          throw new Error(`User record update failed: ${responseData.error}`);
-        }
-      }
-      return existingStripeCustomerId;
+    // If user exists on stripe but doesn't match the user in db, update user in db
+    if (existingStripeCustomerId !== stripeCustomerId) {
+      await updateStripeCustomerId(email, existingStripeCustomerId);
+    }
+    return existingStripeCustomerId;
   } else {
-      throw new Error('User not exist.');
+    // If user doesn't exist on Stripe, use the newly created stripe customer's id to update user in db
+    await updateStripeCustomerId(email, stripeIdToInsert);
+    return stripeIdToInsert;
   }
 };
+
+async function updateStripeCustomerId(email: string, stripeCustomerId: string) {
+  const accessToken = cookies().get('accessToken')?.value;
+  const response = await fetch(getURL('/api/user/updateStripeId'), {
+    method: 'PUT',
+    headers: { 
+      'Content-Type': 'application/json',
+      'Cookie': `accessToken=${accessToken};` 
+    },
+    body: JSON.stringify({
+      email: email,
+      stripeCustomerId: stripeCustomerId
+    }),
+    credentials: 'include'
+  });
+
+  if (!response.ok) {
+    const responseData = await response.json();
+    throw new Error(`User record update failed: ${responseData.error}`);
+  }
+}
