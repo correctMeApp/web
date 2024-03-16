@@ -24,7 +24,7 @@ export default function OauthSignIn() {
 
   const handleSignIn = (providerName: string) => {
     setIsSubmitting(true);
-    signIn(providerName, { callbackUrl: getURL('/auth/signin?googleSignIn=true') });
+    signIn(providerName, { callbackUrl: getURL('/auth/signin?googleSignIn=true&disable_button=true') });
   };
 
   return (
