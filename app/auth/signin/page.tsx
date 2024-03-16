@@ -27,7 +27,7 @@ export default function SignIn() {
   const { data: session } = useSession();
 
   const searchParams = useSearchParams()
-  const disable_button = searchParams.has('disable_button')
+  const validatingUser = searchParams.has('validatingUser')
   const googleSignIn = searchParams.has('googleSignIn')
 
   useEffect(() => {
@@ -109,13 +109,13 @@ export default function SignIn() {
         {!isOtpGenerated ? (
           <>
           <div className="mb-4">
-            <OauthSignIn/>
+            <OauthSignIn initialIsSubmitting={validatingUser}/>
           </div>
           <Separator
               text="or continue with a one-time password" />
           <EntryForm
               redirectMethod={redirectMethod}
-              disableButton={disable_button}
+              disableButton={validatingUser}
               onSubmit={handleEmailSubmit}
               inputLabel="Email"
               inputPlaceholder="Enter your email"
@@ -127,7 +127,7 @@ export default function SignIn() {
         <>
           <EntryForm
             redirectMethod={redirectMethod}
-            disableButton={disable_button}
+            disableButton={validatingUser}
             onSubmit={handleOtpSubmit}
             inputLabel="One Time Password Verification"
             inputPlaceholder="Enter the OTP code sent to your email"

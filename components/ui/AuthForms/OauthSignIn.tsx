@@ -12,7 +12,11 @@ type OAuthProviders = {
   icon: JSX.Element;
 };
 
-export default function OauthSignIn() {
+type OAuthSignInProps = {
+  initialIsSubmitting?: boolean;
+};
+
+export default function OauthSignIn({ initialIsSubmitting = false }: OAuthSignInProps) {
   const oAuthProviders: OAuthProviders[] = [
     {
       name: 'google',
@@ -20,7 +24,7 @@ export default function OauthSignIn() {
       icon: <FcGoogle className="h-5 w-5" />
     }
   ];
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(initialIsSubmitting);
 
   const handleSignIn = (providerName: string) => {
     setIsSubmitting(true);
