@@ -14,9 +14,10 @@ type OAuthProviders = {
 
 type OAuthSignInProps = {
   initialIsSubmitting?: boolean;
+  redirectPath?: string
 };
 
-export default function OauthSignIn({ initialIsSubmitting = false }: OAuthSignInProps) {
+export default function OauthSignIn({ initialIsSubmitting = false, redirectPath = '/' }: OAuthSignInProps) {
   const oAuthProviders: OAuthProviders[] = [
     {
       name: 'google',
@@ -27,8 +28,7 @@ export default function OauthSignIn({ initialIsSubmitting = false }: OAuthSignIn
   const [isSubmitting, setIsSubmitting] = useState(initialIsSubmitting);
 
   const handleSignIn = (providerName: string) => {
-    setIsSubmitting(true);
-    signIn(providerName, { callbackUrl: getURL('/auth/signin?googleSignIn=true&disable_button=true') });
+    setIsSubmitting(true);signIn(providerName, { callbackUrl: getURL(`/auth/signin?googleSignIn=true&redirect=${redirectPath}`) });
   };
 
   return (

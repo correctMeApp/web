@@ -33,7 +33,7 @@ export default function Pricing({ product, prices }: Props) {
   
     if (!isLoggedIn) {
       setPriceIdLoading(undefined);
-      return router.push('/auth/signin');
+      return router.replace('/auth/signin?redirect=pricing');
     }
 
     const userResponse = await fetch('/api/user/profile', {

@@ -17,7 +17,7 @@ export default function Account() {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      router.push('/auth/signin');
+      return router.replace('/auth/signin?redirect=account');
     } else {
 
       // Fetch user profile

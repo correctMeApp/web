@@ -1,7 +1,6 @@
 'use client'
 
 import Logo from '@/components/icons/Logo';
-import { getRedirectMethod } from '@/utils/auth-helpers/settings';
 import EntryForm from '@/components/ui/AuthForms/EntryForm';
 import Separator from '@/components/ui/AuthForms/Separator';
 import OauthSignIn from '@/components/ui/AuthForms/OauthSignIn';
@@ -18,7 +17,6 @@ type ToastParams = {
 };
 
 export default function SignIn() {
-  const redirectMethod = getRedirectMethod();
   const { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp } = useOtp();
   const [email, setEmail] = useState('');
   const [toastParams, setToastParams] = useState<ToastParams | null>(null);
@@ -27,8 +25,8 @@ export default function SignIn() {
   const { data: session } = useSession();
 
   const searchParams = useSearchParams()
-  const validatingUser = searchParams.has('validatingUser')
   const googleSignIn = searchParams.has('googleSignIn')
+  const redirectPath = searchParams.get('redirect') || '';
 
   useEffect(() => {
     if (toastParams) {
@@ -50,7 +48,7 @@ export default function SignIn() {
       })
       .then(response => {
         if (response.ok) {
-          router.push('/');
+          router.replace(getURL(`/${redirectPath}`));
         } else {
           console.log('Failed to validate user');
           setToastParams({
@@ -58,7 +56,7 @@ export default function SignIn() {
             description: 'Please sign in again with Google',
             variant: 'destructive'
           });
-          router.replace('/auth/signin');
+          router.replace(`/auth/signin?redirect=${redirectPath}`);
         }
       });
     }
@@ -79,7 +77,7 @@ export default function SignIn() {
         description: 'Please request a new OTP to your email',
         variant: 'destructive'
       });
-      router.replace('/auth/signin');
+      router.replace(`/auth/signin?redirect=${redirectPath}`);
     }
   };
 
@@ -87,8 +85,8 @@ export default function SignIn() {
     e.preventDefault();
     const otp = e.currentTarget.elements.otp.value;
     try {
-      const result = await verifyOtp({ email, otp });
-      router.replace(result);
+      await verifyOtp({ email, otp });
+      router.replace(getURL(`/${redirectPath}`));
     } catch (error) {
       setIsOtpGenerated(false);
       setToastParams({
@@ -96,7 +94,7 @@ export default function SignIn() {
         description: 'Please request a new OTP to your email',
         variant: 'destructive'
       });
-      router.replace('/auth/signin');
+      router.replace(`/auth/signin?redirect=${redirectPath}`);
     }
   };
 
@@ -109,13 +107,13 @@ export default function SignIn() {
         {!isOtpGenerated ? (
           <>
           <div className="mb-4">
-            <OauthSignIn initialIsSubmitting={validatingUser}/>
+          <OauthSignIn initialIsSubmitting={googleSignIn} redirectPath={redirectPath}/>
           </div>
           <Separator
               text="or continue with a one-time password" />
           <EntryForm
-              redirectMethod={redirectMethod}
-              disableButton={validatingUser}
+              redirectMethod="client"
+              disableButton={googleSignIn}
               onSubmit={handleEmailSubmit}
               inputLabel="Email"
               inputPlaceholder="Enter your email"
@@ -126,8 +124,8 @@ export default function SignIn() {
       ) : (
         <>
           <EntryForm
-            redirectMethod={redirectMethod}
-            disableButton={validatingUser}
+            redirectMethod="client"
+            disableButton={googleSignIn}
             onSubmit={handleOtpSubmit}
             inputLabel="One Time Password Verification"
             inputPlaceholder="Enter the OTP code sent to your email"
@@ -173,8 +171,6 @@ function useOtp() {
     if (!response.ok) {
       throw new Error('Failed to verify OTP');
     }
-  
-    return '/';
   };
 
   return { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp };
