@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { getURL } from '@/utils/helpers';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { SessionProvider } from 'next-auth/react';
 
 interface AuthContextData {
   isLoggedIn: boolean;
@@ -36,9 +35,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ isLoggedIn }}>
-        <SessionProvider>
       {children}
-      </SessionProvider>
     </AuthContext.Provider>
   );
 };

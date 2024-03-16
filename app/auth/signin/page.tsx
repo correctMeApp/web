@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/Toasts/use-toast';
 import { useSession } from 'next-auth/react';
 import { getURL } from '@/utils/helpers';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type ToastParams = {
   title: string;
@@ -17,11 +17,7 @@ type ToastParams = {
   variant: 'destructive' | 'default' | null;
 };
 
-export default function SignIn({
-  searchParams
-}: {
-  searchParams: { disable_button: boolean, googleSignIn: boolean};
-}) {
+export default function SignIn() {
   const redirectMethod = getRedirectMethod();
   const { isOtpGenerated, setIsOtpGenerated, requestOtp, verifyOtp } = useOtp();
   const [email, setEmail] = useState('');
@@ -30,14 +26,16 @@ export default function SignIn({
   const router = useRouter();
   const { data: session } = useSession();
 
+  const searchParams = useSearchParams()
+  const disable_button = searchParams.has('disable_button')
+  const googleSignIn = searchParams.has('googleSignIn')
+
   useEffect(() => {
     if (toastParams) {
       toast(toastParams);
     }
 
-    console.log('useEffect values', searchParams.googleSignIn, session, hasValidatedUser);
-
-    if (searchParams.googleSignIn && session && !hasValidatedUser) {
+    if (googleSignIn && session && !hasValidatedUser) {
       setHasValidatedUser(true);
       fetch(getURL('/api/validateOauthUser'), {
         method: 'POST',
@@ -117,7 +115,7 @@ export default function SignIn({
               text="or continue with a one-time password" />
           <EntryForm
               redirectMethod={redirectMethod}
-              disableButton={searchParams.disable_button}
+              disableButton={disable_button}
               onSubmit={handleEmailSubmit}
               inputLabel="Email"
               inputPlaceholder="Enter your email"
@@ -129,7 +127,7 @@ export default function SignIn({
         <>
           <EntryForm
             redirectMethod={redirectMethod}
-            disableButton={searchParams.disable_button}
+            disableButton={disable_button}
             onSubmit={handleOtpSubmit}
             inputLabel="One Time Password Verification"
             inputPlaceholder="Enter the OTP code sent to your email"

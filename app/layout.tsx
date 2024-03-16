@@ -3,13 +3,13 @@ import Navbar from '@/components/ui/Navbar';
 import { Toaster } from '@/components/ui/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
 import 'styles/main.css';
-import { AuthProvider } from './authContext';
+import { Providers } from './provider';
 
 export default async function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body className="bg-slate-900 loading">
-        <AuthProvider>
+        <Providers>
           <Navbar />
           <main
             id="skip"
@@ -21,7 +21,7 @@ export default async function RootLayout({ children }: PropsWithChildren) {
           <Suspense>
             <Toaster />
           </Suspense>
-        </AuthProvider>
+        </Providers>
       </body>
     </html>
   );
