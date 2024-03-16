@@ -1,18 +1,18 @@
-'use client'
 // utils/authContext.tsx
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useEffect, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 import { getURL } from '@/utils/helpers';
 import { usePathname, useSearchParams } from 'next/navigation';
 
 interface AuthContextData {
   isLoggedIn: boolean;
+  setIsLoggedIn: Dispatch<SetStateAction<boolean>>;
 }
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-const AuthContext = createContext<AuthContextData>({ isLoggedIn: false });
+const AuthContext = createContext<AuthContextData>({ isLoggedIn: false, setIsLoggedIn: () => {} });
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [pathname, searchParams]);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
       {children}
     </AuthContext.Provider>
   );

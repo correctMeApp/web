@@ -9,6 +9,7 @@ import { toast } from '@/components/ui/Toasts/use-toast';
 import { useSession } from 'next-auth/react';
 import { getURL } from '@/utils/helpers';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useAuth } from '@/app/authContext';
 
 type ToastParams = {
   title: string;
@@ -23,6 +24,7 @@ export default function SignIn() {
   const [hasValidatedUser, setHasValidatedUser] = useState(false);
   const router = useRouter();
   const { data: session } = useSession();
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
 
   const searchParams = useSearchParams()
   const googleSignIn = searchParams.has('googleSignIn')
@@ -47,7 +49,9 @@ export default function SignIn() {
         credentials: 'same-origin',
       })
       .then(response => {
+        isLoggedIn;
         if (response.ok) {
+          setIsLoggedIn(true);
           router.replace(getURL(`/${redirectPath}`));
         } else {
           console.log('Failed to validate user');
@@ -86,6 +90,7 @@ export default function SignIn() {
     const otp = e.currentTarget.elements.otp.value;
     try {
       await verifyOtp({ email, otp });
+      setIsLoggedIn(true);
       router.replace(getURL(`/${redirectPath}`));
     } catch (error) {
       setIsOtpGenerated(false);
