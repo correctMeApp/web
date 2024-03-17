@@ -46,8 +46,8 @@ export default function Account() {
         </div>
         <div className="p-4">
           {user && <CustomerPortalForm user={user} />}
-          <NameForm userName={user?.name ?? ''} />
-          <EmailForm userEmail={user?.email} />
+          <NameForm userName={user?.name ?? ''}/>
+          <EmailForm userEmail={user?.email ?? ''} />
         </div>
       </>
       )}
