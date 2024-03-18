@@ -12,14 +12,19 @@ const refreshToken = async (req: NextRequest) => {
   const currentRefreshToken = cookies().get('refreshToken')?.value
 
   try {
-    const response = await postData({
-      url: getBackendURL('/auth/refresh'),
-      data: { token: currentRefreshToken },
-      authenticated: false,
-      req,
+    const response = await fetch(getBackendURL('/auth/refresh'), {
+      method: 'POST',
+      headers: getCommonHeaders(),
+      body: JSON.stringify({ token: currentRefreshToken }),
+      credentials: 'include',
     });
 
-    const { accessToken, refreshToken } = response.data;
+    const data = await response.json();
+    const { accessToken, refreshToken } = data;
+
+    if (!response.ok) {
+      throw new Error('Refresh token expired or invalid');
+    }
 
     return new Response('ok', {
       status: 204,
