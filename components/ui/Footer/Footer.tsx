@@ -14,7 +14,7 @@ export default function Footer() {
             <span className="mr-2 border rounded-full border-zinc-700">
               <Logo />
             </span>
-            <span>ACME</span>
+            <span>CorrectMe</span>
           </Link>
         </div>
         <div className="col-span-1 lg:col-span-2">

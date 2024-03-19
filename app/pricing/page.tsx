@@ -5,7 +5,7 @@ export default async function PricingPage() {
 
   return (
     <>
-      <Pricing product={testData.product} prices={testData.prices} />;
+      <Pricing product={testData.product} prices={testData.prices} />
     </>
   );
 }
