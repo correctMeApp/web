@@ -39,7 +39,7 @@ export default function Navlinks() {
             Pricing
           </Link>
           <a 
-            href="/CorrectMe.dmg" 
+            href="/Duck_it.dmg" 
             download 
             className={`${s.link} px-4 py-2 bg-slate-800 rounded-full active:text-opacity-50`}
           >

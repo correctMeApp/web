@@ -25,11 +25,11 @@ export default function EntryForm({
   inputName,
   ctaLabel
 }: EntryFormProps) {
-  const router = redirectMethod === 'client' ? useRouter() : null;
+  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true); // Disable the button while the request is being handled
+    setIsSubmitting(true);
     await onSubmit(e, router);
     setIsSubmitting(false);
   };
