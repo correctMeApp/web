@@ -14,7 +14,7 @@ export default function Footer() {
             <span className="mr-2 border rounded-full border-zinc-700">
               <Logo />
             </span>
-            <span>CorrectMe</span>
+            <span>Duck it!</span>
           </Link>
         </div>
         <div className="col-span-1 lg:col-span-2">
@@ -76,7 +76,7 @@ export default function Footer() {
       <div className="px-6 flex flex-col items-center justify-between py-12 space-y-4 md:flex-row bg-slate-950">
         <div>
           <span>
-            &copy; {new Date().getFullYear()} CorrectMe, Inc. All rights reserved.
+            &copy; {new Date().getFullYear()} Duck it! All rights reserved.
           </span>
         </div>
         <div className="flex items-center">
