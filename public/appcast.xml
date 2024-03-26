@@ -1,0 +1,14 @@
+<?xml version="1.0" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>Duck it!</title>
+        <item>
+            <title>0.1.1</title>
+            <pubDate>Tue, 26 Mar 2024 21:06:27 +0100</pubDate>
+            <sparkle:version>1</sparkle:version>
+            <sparkle:shortVersionString>0.1.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://useduckit.app/Duck_it.dmg" length="7551793" type="application/octet-stream" sparkle:edSignature="2Qo08iuZNNEoV2E3PX3+UWT2VBdQQBX0WMEVxc8iWdM1WQeaHpN1MN+HZ7EzuIKTUsseO8a3E1NRmcblThOVBQ=="/>
+        </item>
+    </channel>
+</rss>
