@@ -4,6 +4,14 @@
         <title>Duck it!</title>
         <item>
             <title>0.1.0</title>
+            <pubDate>Wed, 27 Mar 2024 16:06:10 +0100</pubDate>
+            <sparkle:version>7</sparkle:version>
+            <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://useduckit.app/Duck_it.dmg" length="7551926" type="application/octet-stream" sparkle:edSignature="kGAxKtn58AqxfzcDgjOg0cIuzGrMA1X9LCltFnWS7Dd9fqQKgJk2qRF+m1moUo5LTR1Tt5DoejFCYbQxfYL5CQ=="/>
+        </item>
+        <item>
+            <title>0.1.0</title>
             <pubDate>Tue, 26 Mar 2024 21:56:42 +0100</pubDate>
             <sparkle:version>6</sparkle:version>
             <sparkle:shortVersionString>0.1.0</sparkle:shortVersionString>
