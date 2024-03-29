@@ -64,7 +64,7 @@ const monthlyPrice: Price = {
 };
 
 const yearlyPrice: Price = {
-  id: "price_1Oqz9aD61ZIsxTUt3UiqACKb",
+  id: "price_1OzeaLD61ZIsxTUtkt8O5tpR",
   active: true,
   currency: "usd",
   product_id: testProduct.id,
