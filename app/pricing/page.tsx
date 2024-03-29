@@ -1,11 +1,11 @@
 import Pricing from '@/components/ui/Pricing/Pricing';
-import { testData } from '@/fixtures/testFixtures';
+import { productData } from '@/fixtures/testFixtures';
 
 export default async function PricingPage() {
 
   return (
     <>
-      <Pricing product={testData.product} prices={testData.prices} />
+      <Pricing product={productData.product} prices={productData.prices} />
     </>
   );
 }
