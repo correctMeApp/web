@@ -40,7 +40,6 @@ const testData = {
   prices: [testMonthlyPrice, testYearlyPrice],
 };
 
-// Product fixture
 const product: Product = {
   id: "prod_PpJCon8qCQyvdi",
   active: true,
@@ -50,7 +49,6 @@ const product: Product = {
   metadata: null,
 };
 
-// Price fixtures
 const monthlyPrice: Price = {
   id: "price_1OzeaLD61ZIsxTUtCNxaomrT",
   active: true,
@@ -67,7 +65,7 @@ const yearlyPrice: Price = {
   id: "price_1OzeaLD61ZIsxTUtkt8O5tpR",
   active: true,
   currency: "usd",
-  product_id: testProduct.id,
+  product_id: product.id,
   unit_amount: 4990,
   interval: PricingPlanInterval.Year,
   interval_count: 1,
