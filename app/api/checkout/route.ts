@@ -27,12 +27,27 @@ export async function POST(req: NextRequest, res: NextResponse) {
         customer_update: {
           address: 'auto'
         },
+        consent_collection: {
+          terms_of_service: 'required'
+        },
         line_items: [
           {
             price: price.id,
             quantity: 1
           }
         ],
+        payment_method_collection: 'if_required',
+        automatic_tax: {
+          enabled: true
+        },
+        subscription_data: {
+          trial_period_days: price.trial_period_days,
+          trial_settings: {
+            end_behavior: {
+              missing_payment_method: 'pause'
+            }
+          }
+        },
         cancel_url: getURL(),
         success_url: getURL(redirectPath)
       };
