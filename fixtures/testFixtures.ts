@@ -19,7 +19,7 @@ const testMonthlyPrice: Price = {
   unit_amount: 590,
   interval: PricingPlanInterval.Month,
   interval_count: 1,
-  trial_period_days: null,
+  trial_period_days: 3,
   type: PricingType.Recurring,
 };
 
@@ -31,7 +31,7 @@ const testYearlyPrice: Price = {
   unit_amount: 4990,
   interval: PricingPlanInterval.Year,
   interval_count: 1,
-  trial_period_days: null,
+  trial_period_days: 3,
   type: PricingType.Recurring,
 };
 
@@ -57,7 +57,7 @@ const monthlyPrice: Price = {
   unit_amount: 490,
   interval: PricingPlanInterval.Month,
   interval_count: 1,
-  trial_period_days: null,
+  trial_period_days: 3,
   type: PricingType.Recurring,
 };
 
@@ -69,7 +69,7 @@ const yearlyPrice: Price = {
   unit_amount: 4990,
   interval: PricingPlanInterval.Year,
   interval_count: 1,
-  trial_period_days: null,
+  trial_period_days: 3,
   type: PricingType.Recurring,
 };
 
