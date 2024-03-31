@@ -1,14 +1,20 @@
+'use client';
 import Footer from '@/components/ui/Footer';
 import Navbar from '@/components/ui/Navbar';
 import { Toaster } from '@/components/ui/Toasts/toaster';
 import { PropsWithChildren, Suspense } from 'react';
 import 'styles/main.css';
 import { Providers } from './provider';
+import { usePathname } from 'next/navigation';
 
-export default async function RootLayout({ children }: PropsWithChildren) {
+export default function RootLayout({ children }: PropsWithChildren) {
+  const pathname = usePathname();
+  const isHomePage = pathname === '/';
+  const bgClass = isHomePage ? 'bg-white' : 'bg-slate-900';
+
   return (
     <html lang="en">
-      <body className="bg-slate-900 loading">
+      <body className={`loading ${bgClass}`}>
         <Providers>
           <Navbar />
           <main

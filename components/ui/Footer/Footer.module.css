@@ -2,15 +2,23 @@
   @apply sticky top-0 bg-white z-40 transition-all duration-150 h-16 md:h-20;
 }
 .subpageRoot {
-  @apply sticky top-0 bg-slate-900 z-40 transition-all duration-150 h-16 md:h-20;
+  @apply sticky top-0 bg-slate-950 z-40 transition-all duration-150 h-16 md:h-20;
+}
+
+.homeHeadline {
+  @apply inline-flex items-center leading-6 font-medium transition ease-in-out duration-200 text-slate-600 rounded-md p-1;
+}
+
+.subpageHeadline {
+  @apply inline-flex items-center leading-6 font-medium transition ease-in-out duration-200 text-zinc-200 rounded-md p-1;
 }
 
 .homeLink {
-  @apply inline-flex items-center leading-6 font-semibold transition ease-in-out duration-200 cursor-pointer text-slate-600 rounded-md p-1;
+  @apply inline-flex items-center leading-6 font-medium transition ease-in-out duration-200 cursor-pointer text-slate-600 rounded-md p-1;
 }
 
 .subpageLink {
-  @apply inline-flex items-center leading-6 font-semibold transition ease-in-out duration-200 cursor-pointer text-zinc-200 rounded-md p-1;
+  @apply inline-flex items-center leading-6 font-medium transition ease-in-out duration-200 cursor-pointer text-zinc-200 rounded-md p-1;
 }
 
 .homeLink:hover {
