@@ -33,8 +33,12 @@ export default function HomePage() {
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://www.useduckit.app/" />
         <meta property="og:title" content="Duck it! — Instant AI writing assistant" />
+        <meta property="title" content="Duck it! — Instant AI writing assistant" />
         <meta property="og:description" content="Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut." />
+        <meta property="description" content="Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut." />
         <meta property="og:image" content="/OGImage.jpg" />
+        <meta property="image" content="/OGImage.jpg" />
+        <meta property="og:site_name" content="Duck it!" />
 
         <meta property="twitter:card" content="summary_large_image" />
         <meta property="twitter:url" content="https://www.useduckit.app/" />
