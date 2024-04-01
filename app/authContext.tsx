@@ -1,7 +1,6 @@
 // utils/authContext.tsx
 import React, { createContext, useContext, useEffect, useState, ReactNode, Dispatch, SetStateAction } from 'react';
 import { getURL } from '@/utils/helpers';
-import { usePathname, useSearchParams } from 'next/navigation';
 
 interface AuthContextData {
   isLoggedIn: boolean;
@@ -16,8 +15,6 @@ const AuthContext = createContext<AuthContextData>({ isLoggedIn: false, setIsLog
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   useEffect(() => {
     const checkIsLoggedIn = async () => {
@@ -31,7 +28,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     checkIsLoggedIn();
-  }, [pathname, searchParams]);
+  });
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>

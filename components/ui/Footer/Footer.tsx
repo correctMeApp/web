@@ -15,7 +15,7 @@ export default function Footer() {
 
   return (
     <footer className={`${styleClass} mx-auto max-w-[1920px]`}>
-    <hr className="border-t border-slate-500" />
+    <hr className="border-t border-slate-500"/>
       <div className={`${bgClass} px-6 grid grid-cols-1 gap-2 py-12 lg:grid-cols-6`}>
         <div className="col-span-1 lg:col-span-1">
           <ul className="flex flex-col flex-initial md:flex-1">

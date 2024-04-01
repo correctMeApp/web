@@ -39,15 +39,18 @@ export default function Navlinks() {
         <Link href="/" className={s.logo} aria-label="Logo">
             <Logo/>
         </Link>
-        <nav className="ml-6 space-x-2 lg:block">
-          <Link href="/pricing" className={`${linkClass} mr-4 active:text-opacity-50`}>
-              Pricing
+        <nav className="ml-6 space-x-4 lg:block">
+          {/* <Link href="/pricing"  */}
+          <Link href="/pricing"
+          className={`${linkClass} active:text-opacity-50`}>
+            Pricing
           </Link>
-          <Link href="/Duck_it.dmg" 
-            download 
+          {/* <Link href="/Duck_it.dmg" 
+            download  */}
+          <Link href="/#download"
             className={`${linkButtonClass} px-4 py-2`}>
             Download
-        </Link>
+          </Link>
         </nav>
       </div>
       <div className="flex justify-end space-x-8">
