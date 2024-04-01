@@ -6,6 +6,7 @@ import { PropsWithChildren, Suspense } from 'react';
 import 'styles/main.css';
 import { Providers } from './provider';
 import { usePathname } from 'next/navigation';
+import { Analytics } from "@vercel/analytics/react"
 
 export default function RootLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
             <Toaster />
           </Suspense>
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
