@@ -11,6 +11,7 @@ html {
     'case' 1,
     'rlig' 1,
     'calt' 0;
+  scroll-behavior: smooth;
 }
 
 html,
