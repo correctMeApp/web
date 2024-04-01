@@ -14,6 +14,28 @@ html {
   scroll-behavior: smooth;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  outline: 0;
+  list-style: none;
+  font-family: var(--font-family);
+  text-rendering: optimizeLegibility;
+}
+
+/* Define variable */
+:root {
+  --font-family: "Inter", sans-serif;
+  --black100: #0f0f0f;
+  --black50: #65636c;
+  --black20: #65636c50;
+  --black15: #65636c10;
+  --black10: #f5f5f5;
+  --black5: #f5f5f5b3;
+  --slate: #0e1628;
+}
+
 html,
 body {
   font-family: -apple-system, system-ui, BlinkMacSystemFont, 'Helvetica Neue',

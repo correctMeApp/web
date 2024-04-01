@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import styles from './HomePage.module.css';
 import Head from 'next/head';
+import 'styles/main.css';
 
 export default function HomePage() {
   return (
