@@ -20,7 +20,7 @@ export default function Footer() {
         <div className="col-span-1 lg:col-span-1">
           <ul className="flex flex-col flex-initial md:flex-1">
             <li className="py-3 md:py-0 md:pb-4">
-              <p className={`${headlineClass} font-bold`}>
+              <p className={`${headlineClass}`}>
                 LEGAL
               </p>
             </li>
@@ -52,7 +52,7 @@ export default function Footer() {
         </div>
         <div className="col-span-1 lg:col-span-6 lg:col-start-12 text-right">
           <div className="mb-4">
-            <p className={`${headlineClass} font-bold`}>
+            <p className={`${headlineClass}`}>
               Feedback & questions?
             </p>
             <div>

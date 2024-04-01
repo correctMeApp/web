@@ -22,11 +22,11 @@
 }
 
 .homeLinkButton {
-  @apply inline-flex items-center leading-6 font-semibold transition ease-in-out duration-200 cursor-pointer  bg-slate-900 text-white rounded-full p-1 hover:scale-105 hover:bg-gray-900;
+  @apply inline-flex items-center leading-6 font-semibold transition ease-in-out duration-200 cursor-pointer  bg-slate-900 text-white rounded-full p-3 hover:scale-105 hover:bg-gray-900;
 }
 
 .subpageLinkButton {
-  @apply inline-flex items-center leading-6 font-semibold transition ease-in-out duration-200 cursor-pointer  bg-slate-800 text-zinc-200 rounded-full p-1 hover:scale-105;
+  @apply inline-flex items-center leading-6 font-semibold transition ease-in-out duration-200 cursor-pointer  bg-slate-800 text-zinc-200 rounded-full p-3 hover:scale-105;
  
 }
 
