@@ -63,7 +63,7 @@ export default function CustomerPortalForm({ user }: Props) {
             <p className="pb-4 sm:pb-0">See our pricing options</p>
             <Button
               variant="slim"
-              onClick={() => router.push('/#pricing')}
+              onClick={() => router.push('/pricing')}
             >
               Choose your plan
             </Button>
