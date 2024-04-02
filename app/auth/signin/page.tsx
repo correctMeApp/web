@@ -138,6 +138,9 @@ export default function SignIn() {
             inputName="otp"
             ctaLabel="Verify OTP"
           />
+          <div className="-mt-6 pb-5 text-sm leading-8 text-zinc-500">
+              Don't forget to check your spam folder
+            </div>
           <button style={{textAlign: 'left'}} className="font-light text-sm text-left" onClick={() => setIsOtpGenerated(false)}>
             Choose a different method to continue ?
           </button>

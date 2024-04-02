@@ -181,13 +181,13 @@ export default function Pricing({ product, prices }: Props) {
                     <h2 className="text-2xl font-semibold leading-6 text-white">
                       Duck it!
                     </h2>
-                    <p className="mt-4 text-zinc-300">Single macOS app to solve all your writing problems</p>
+                    <p className="mt-4 text-zinc-300">- Single macOS app to solve all your writing problems</p>
+                    <p className="mt-4 text-zinc-300">- Free trial period of 3 days or 15 uses</p>
                     <p className="mt-8">
                       <span className="text-5xl font-extrabold white">
                         {priceString}
                       </span>
-                      <span className="text-base font-medium text-zinc-100">
-                        /month
+                      <span className="text-base font-medium text-zinc-100">  + VAT /month
                       </span>
                     </p>
                     <Button
