@@ -66,7 +66,7 @@ const yearlyPrice: Price = {
   active: true,
   currency: "usd",
   product_id: product.id,
-  unit_amount: 4990,
+  unit_amount: 4680,
   interval: PricingPlanInterval.Year,
   interval_count: 1,
   trial_period_days: 3,
