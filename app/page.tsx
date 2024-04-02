@@ -25,10 +25,9 @@ export const metadata: Metadata = {
   manifest: '/site.webmanifest',
   twitter: {
     card: 'summary_large_image',
-    url: 'https://www.useduckit.app/',
     title: 'Duck it! — Instant AI writing assistant',
     description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut.',
-    image: '/OGImage.jpg',
+    images: ['https://www.useduckit.app/OGImage.jpg'],
   },
   icons: {
     icon: [
