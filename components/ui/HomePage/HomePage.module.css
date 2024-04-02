@@ -1,0 +1,143 @@
+/* Body styles */
+.homepage {
+  font-family: var(--font-family);
+  color: var(--black100);
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.homePage a {
+  color: var(--slate);
+  text-decoration: none;
+}
+.homePage a:hover {
+  text-decoration: none;
+}
+.homePage .container{
+  padding: 24px;
+}
+
+.homePage .headline {
+  max-width: 512px;
+  margin: auto;
+}
+.homePage .logo{
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 48px;
+}
+.homePage .headline h1{
+  color: var(--black100);
+  text-align: center;
+  font-size: 48px;
+  font-weight: bold;
+  line-height: 100%; /* 48px */
+  letter-spacing: -0.96px;
+  margin-bottom: 12px;
+}
+.homePage .headline h1 .under{
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-thickness: 3.2px;
+  text-decoration-color: #0688F5;
+  text-decoration-skip-ink: none;
+  transition: all 0.2s ease;
+}
+.homePage .headline h1 .under:hover{
+  scale: 1.05;
+}
+.homePage .headline p{
+  color: var(--black50);
+  text-align: center;
+  font-weight: 600;
+  line-height: 140%; /* 19.6px */
+  padding-top: 12px;
+  padding-bottom: 12px;
+  max-width: 368px;
+  margin: auto;
+}
+.homePage .headline a{
+  border-radius: 100px;
+  background: var(--slate);
+  display: inline-block;
+  color: #fff;
+  display: inline-flex;
+  padding: 15px 21px;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+}
+.homePage .headline a:hover{
+  scale: 1.05;
+}
+
+.homePage .headline h2{
+  color: var(--black10);
+  text-align: center;
+  font-size: 40px;
+  font-weight: bold;
+  line-height: 100%; /* 48px */
+  letter-spacing: -0.96px;
+  margin-bottom: 12px;
+}
+
+.homePage .headline.footer{
+  padding: 80px 0 48px 0;
+}
+.homePage .headline.footer h1{
+  max-width: 294px;
+  margin: auto;
+  padding-bottom: 16px;
+}
+.homePage .video{
+  max-width: 1040px;
+  max-height: 585px;
+  background-color: #0688F5;
+  border-radius: 24px;
+  margin: 80px auto;
+  overflow: hidden;
+}
+.homePage .video video {
+  width: 100%;
+}
+.homePage .features {
+  padding-left: 80px;
+  padding-right: 80px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); 
+  column-gap: 140px;
+  row-gap: 40px;
+}
+.homePage .features .div{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-weight: 400;
+}
+.homePage .features .title {
+  color: var(--black10);
+  font-weight: 600;
+}
+.homePage .features .desc {
+  margin-top: 20px;
+  color: var(--black5);
+}
+.homePage .content{
+  max-width: 540px;
+  margin: auto;
+}
+@media screen and (max-width: 768px) { 
+  .homePage .features {
+      grid-template-columns: 1fr; 
+  }
+  .homePage .headline h1 {
+    font-size: 44px;
+  }
+  .homePage .container{
+    padding: 16px;
+  }
+}
