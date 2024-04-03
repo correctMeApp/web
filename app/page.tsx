@@ -3,14 +3,14 @@ import HomePage from '@/components/ui/HomePage';
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.useduckit.app'),
+  metadataBase: new URL('https://useduckit.app'),
   keywords: ['Grammarly', 'OpenAI', 'ChatGPT', 'AI Writing Assistant', 'macos ai assistant'],
   title: 'Duck it! — Instant AI writing assistant',
   description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut.',
   openGraph: {
     title: 'Duck it! — Instant AI writing assistant',
     description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut.',
-    url: 'https://www.useduckit.app/',
+    url: 'https://useduckit.app/',
     siteName: 'Duck it!',
     images: [
       {
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Duck it! — Instant AI writing assistant',
     description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut.',
-    images: ['https://www.useduckit.app/OGImage.jpg'],
+    images: ['https://useduckit.app/OGImage.jpg'],
   },
   icons: {
     icon: [
