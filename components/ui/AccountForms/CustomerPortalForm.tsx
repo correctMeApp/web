@@ -43,7 +43,7 @@ export default function CustomerPortalForm({ user }: Props) {
       title="Your Plan"
       description={ 
         user.subscription.superRole
-        ? `You have to role "${user.subscription.superRole}" and currently have unlimited usage.`
+        ? `You have "${user.subscription.superRole}" role and currently have unlimited usage.`
         : user.subscription.stripeId
         ? `You have an ongoing ${user.subscription.type} subscription ${user.subscription.expirationDate ? ' & ending at ' + new Date(user.subscription.expirationDate).toLocaleDateString() : ''}.`
           : 'You are not currently subscribed to any plan.'
