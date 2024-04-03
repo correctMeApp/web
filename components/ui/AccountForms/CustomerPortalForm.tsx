@@ -6,7 +6,7 @@ import { useState } from 'react';
 import Card from '@/components/ui/Card';
 
 interface Props {
-  user: { email: string, name?: string, subscription: { stripeId?: string, expirationDate?: string, type: string } }
+  user: { email: string, name?: string, subscription: { stripeId?: string, expirationDate?: string, type: string, superRole?: string | undefined } }
 }
 
 export default function CustomerPortalForm({ user }: Props) {
@@ -41,9 +41,11 @@ export default function CustomerPortalForm({ user }: Props) {
   return (
     <Card
       title="Your Plan"
-      description={
-        user.subscription.stripeId
-        ? `You have an ongoing ${user.subscription.type} subscription${user.subscription.expirationDate ? ' & ending at ' + new Date(user.subscription.expirationDate).toLocaleDateString() : ''}.`
+      description={ 
+        user.subscription.superRole
+        ? `You have to role "${user.subscription.superRole}" and currently have unlimited usage.`
+        : user.subscription.stripeId
+        ? `You have an ongoing ${user.subscription.type} subscription ${user.subscription.expirationDate ? ' & ending at ' + new Date(user.subscription.expirationDate).toLocaleDateString() : ''}.`
           : 'You are not currently subscribed to any plan.'
       }
       footer={

@@ -12,7 +12,7 @@ export default function Account() {
   const [user, setUser] = useState<{ 
     email: string,
     name?: string,
-    subscription: { stripeId?: string, expirationDate?: string, type: string }
+    subscription: { stripeId?: string, expirationDate?: string, type: string, superRole?: string | undefined }
      } | null>(null);
 
   useEffect(() => {
