@@ -44,7 +44,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
           trial_period_days: price.trial_period_days,
           trial_settings: {
             end_behavior: {
-              missing_payment_method: 'pause'
+              missing_payment_method: 'cancel'
             }
           }
         },
