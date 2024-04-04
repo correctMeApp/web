@@ -1,8 +1,8 @@
 .homeRoot {
-  @apply sticky top-0 bg-white z-40 transition-all duration-150 h-16 md:h-20;
+  @apply top-0 bg-white z-40 transition-all duration-150 h-16 md:h-20;
 }
 .subpageRoot {
-  @apply sticky top-0 bg-slate-900 z-40 transition-all duration-150 h-16 md:h-20;
+  @apply top-0 bg-slate-900 z-40 transition-all duration-150 h-16 md:h-20;
 }
 
 .homeLink {

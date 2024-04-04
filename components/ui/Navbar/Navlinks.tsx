@@ -48,7 +48,7 @@ export default function Navlinks() {
           {/* <Link href="/Duck_it.dmg" 
             download  */}
           <Link href="/#download"
-            className={`${linkButtonClass} px-4 py-2`}>
+            className={`${linkClass} px-4 py-2`}>
             Download
           </Link>
         </nav>
