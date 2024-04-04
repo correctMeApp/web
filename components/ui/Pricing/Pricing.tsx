@@ -30,6 +30,10 @@ export default function Pricing({ product, prices }: Props) {
   const searchParams = useSearchParams()
   const checkoutPriceId = searchParams.get('priceId');
 
+  const redirectToDownload = () => {
+    return router.replace(`/#download`);
+  };
+
   const handleStripeCheckout = async (price: Price) => {
     setPriceIdLoading(price.id);
   
@@ -194,10 +198,12 @@ export default function Pricing({ product, prices }: Props) {
                       variant="slim"
                       type="button"
                       loading={priceIdLoading === price.id}
-                      onClick={() => handleStripeCheckout(price)}
+                      // onClick={() => handleStripeCheckout(price)}
+                      onClick={redirectToDownload}
                       className="block w-full py-2 mt-8 text-sm font-semibold text-center text-white rounded-md hover:bg-zinc-900"
                     >
-                      {'Try for free'}
+                      {/*  {'Try for free'}  */}
+                      {'Download free trial'}
                     </Button>
 
                     <p className="mt-4 text-zinc-300 text-center font-bold"><b>No credit cards needed during the trial period</b></p>
