@@ -127,7 +127,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: min(calc(100% - 150px), 1400px);
+  width: min(calc(100% - 150px), 1200px);
   margin: 150px auto;
 }
 
@@ -139,9 +139,11 @@
 }
 
 .homePage .demo .gif {
-  width: 100%;
   border-radius: 24px;
   overflow: hidden;
+  transform: scale(0.7);
+  width: 140%;
+  margin-left: -100px;
 }
 
 .homePage .demo .gif img {
@@ -169,7 +171,7 @@
 
 @media (max-width: 768px) {
   .homePage .demo {
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     margin: 20px auto;
     padding: 20px;
   }
@@ -179,11 +181,33 @@
     align-items: left;
     flex-direction: column;
   }
+  .homePage .demo .desc h1 {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--black100);
+    align-items: flex-start;
+  }
   .homePage .demo .gif {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+    border-radius: 24px;
+    overflow: hidden;
+    transform: scale(0.35);
+    width: 300%;
+    margin-left: -300px;
+    margin-top: -100px;
+    margin-bottom: -100px;
+  }
+  .homePage .demo .gif img {
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+  .animatedText {
+    overflow: hidden;
+    border-right: .12em solid black;
+    white-space: nowrap;
+    animation: typing 10s steps(10, end) infinite, blinking .8s infinite;
+    font-size: 18px;
+    width: 0;
   }
   .homePage .features {
     grid-template-columns: 1fr; 
