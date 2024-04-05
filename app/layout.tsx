@@ -7,6 +7,7 @@ import 'styles/main.css';
 import { Providers } from './provider';
 import { usePathname } from 'next/navigation';
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 export default function RootLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: PropsWithChildren) {
           </Suspense>
         </Providers>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
