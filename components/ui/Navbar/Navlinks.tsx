@@ -13,7 +13,6 @@ export default function Navlinks() {
 
   const isHomePage = pathname === '/';
   const linkClass = isHomePage ? s.homeLink : s.subpageLink;
-  const linkButtonClass = isHomePage ? s.homeLinkButton : s.subpageLinkButton;
 
   const handleSignOut = async ()=> {
     try {
@@ -36,9 +35,11 @@ export default function Navlinks() {
   return (
     <div className={`relative flex flex-row justify-between py-4 align-center md:py-6`}>
       <div className="flex items-center flex-1">
-        <Link href="/" className={s.logo} aria-label="Logo">
+        {!isHomePage && (
+          <Link href="/" className={s.logo} aria-label="Logo">
             <Logo/>
-        </Link>
+          </Link>
+        )}
         <nav className="ml-6 space-x-4 lg:block">
           {/* <Link href="/pricing"  */}
           <Link href="/pricing"
