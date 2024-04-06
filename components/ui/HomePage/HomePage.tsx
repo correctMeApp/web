@@ -50,8 +50,10 @@ export default function HomePage() {
             <h1>Select text<span style={{ fontSize: '14px', color: 'var(--black50)', fontWeight: '500'}}>&nbsp;&nbsp;<i>or don't, it picks the last sentence for you.</i></span></h1>
             <h1>Hit your shortcut to <span className={styles.animatedText}> {text}</span></h1>
           </div>
-          <div className={styles.gif}>
-            <img style={{height: '320px'}} src="/demo_4.gif" alt="shortcut_demo" />
+          <div className={styles.videoContainer}>
+            <video autoPlay loop muted playsInline>
+              <source src="/demo_onboarding_fast_1.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
 
@@ -60,8 +62,10 @@ export default function HomePage() {
             <h1>Want more control ?</h1>
             <h1>Use prompt menu for customized inputs.</h1>
           </div>
-          <div className={styles.gif}>
-            <img style={{height: '360px'}} src="/demo_5.gif" alt="shortcut_demo" />
+          <div className={styles.videoContainer}>
+            <video autoPlay loop muted playsInline>
+              <source src="/demo_onboarding_fast_2.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
 
