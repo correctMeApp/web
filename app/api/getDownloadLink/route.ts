@@ -9,8 +9,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
   const reqBody = await req.json();
   const email = reqBody.email;
 
-  console.log(await isValidEmail(email))
-
   if (!(await isValidEmail(email))) {
     return new Response(JSON.stringify({ message: 'Invalid email' }), {status: 400,
          headers: { 'Content-Type': 'application/json' }});
