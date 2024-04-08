@@ -6,10 +6,10 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://useduckit.app'),
   keywords: ['Grammarly', 'OpenAI', 'ChatGPT', 'AI Writing Assistant', 'macos ai assistant'],
   title: 'Duck it! — Instant AI writing assistant',
-  description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut.',
+  description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, rephrase, and translate with just one shortcut.',
   openGraph: {
     title: 'Duck it! — Instant AI writing assistant',
-    description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut.',
+    description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, rephrase, and translate with just one shortcut.',
     url: 'https://useduckit.app/',
     siteName: 'Duck it!',
     images: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Duck it! — Instant AI writing assistant',
-    description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, concise text, and translate with just one shortcut.',
+    description: 'Duck it! is your instant AI writing assistant. Whenever you need to improve grammar, rephrase, and translate with just one shortcut.',
     images: ['https://useduckit.app/OGImage.jpg'],
   },
   icons: {

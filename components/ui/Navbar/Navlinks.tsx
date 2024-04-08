@@ -36,11 +36,11 @@ export default function Navlinks() {
     <div className={`relative flex flex-row justify-between py-4 align-center md:py-6`}>
       <div className="flex items-center flex-1">
         {!isHomePage && (
-          <Link href="/" className={s.logo} aria-label="Logo">
+          <Link href="/" className={`${s.logo}  mr-6`} aria-label="Logo">
             <Logo/>
           </Link>
         )}
-        <nav className="ml-6 space-x-4 lg:block">
+        <nav className="space-x-4 lg:block mr-6"> 
           {/* <Link href="/pricing"  */}
           <Link href="/pricing"
           className={`${linkClass} active:text-opacity-50`}>

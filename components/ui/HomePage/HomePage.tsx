@@ -107,7 +107,7 @@ export default function HomePage() {
         <div className={styles.headline}>
           <div id="download" ></div>
           <h1><i>Duck it!</i> away all your writing <span className={styles.under}>troubls</span>.</h1>
-          <p>Improve, concise, translate with just one shortcut  <span style={{fontSize: '21px'}}> anywhere</span> on your Mac</p>
+          <p>Improve, rephrase, translate with just one shortcut  <span style={{fontSize: '21px'}}> anywhere</span> on your Mac</p>
           <p>
           <DownloadButton/>
           </p>

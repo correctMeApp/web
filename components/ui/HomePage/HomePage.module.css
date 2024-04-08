@@ -257,4 +257,8 @@
   .homePage .headline h1 {
     font-size: 44px;
   }
+
+  .homePage .headline p{
+    max-width: 300px;
+  }
 }
