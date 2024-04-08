@@ -14,7 +14,7 @@ export default function Footer() {
   const bgSecondaryClass = isHomePage ? 'bg-slate-100' : 'bg-slate-950';
 
   return (
-    <footer className={`${styleClass} mx-auto max-w-[1920px]`}>
+    <footer className={`${styleClass} mx-auto max-w-[1920px] z-0`}>
     <hr className="border-t border-slate-300"/>
       <div className={`${bgClass} px-6 grid grid-cols-1 gap-2 py-6 lg:grid-cols-6`}>
         <div className="col-span-2 lg:col-span-2">
