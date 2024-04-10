@@ -205,8 +205,6 @@ export default function Pricing({ product, prices }: Props) {
                       {/*  {'Try for free'}  */}
                       {'Download free trial'}
                     </Button>
-
-                    <p className="mt-4 text-zinc-300 text-center font-bold"><b>No credit cards needed during the trial period</b></p>
                   </div>
                 </div>
               );
