@@ -3,6 +3,14 @@
     <channel>
         <title>Duck it!</title>
         <item>
+            <title>0.2.3</title>
+            <pubDate>Thu, 11 Apr 2024 17:46:16 +0200</pubDate>
+            <sparkle:version>18</sparkle:version>
+            <sparkle:shortVersionString>0.2.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://useduckit.app/Duck_it.dmg" length="8318470" type="application/octet-stream" sparkle:edSignature="wxnnrO1VbtYUBHCwNkKo90FGuIrr7DIhW2NAFzvcVcw5yu4W9kePF78eWkMid/dGPsliQOHyi6MRKDX4u5VcCw=="/>
+        </item>
+        <item>
             <title>0.2.2</title>
             <pubDate>Wed, 10 Apr 2024 15:48:37 +0200</pubDate>
             <sparkle:version>17</sparkle:version>
@@ -17,14 +25,6 @@
             <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
             <enclosure url="https://useduckit.app/Duck_it.dmg" length="8305170" type="application/octet-stream" sparkle:edSignature="p7u3vw4r0CrIKRPVRxB6Lym41DQxJgL7wuuK93tWg+ILomSB3O9YaAkY9XaDF4ifu82Pw82PXRaTJalMGHzPAw=="/>
-        </item>
-        <item>
-            <title>0.2.0</title>
-            <pubDate>Sun, 07 Apr 2024 23:38:23 +0200</pubDate>
-            <sparkle:version>15</sparkle:version>
-            <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>11.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://useduckit.app/Duck_it.dmg" length="8305059" type="application/octet-stream" sparkle:edSignature="xgeuNRgiH42QhTTwaNDybIl1ObgnhgYntOO9MOr+CpdI26H4zLbHcOll8LcXBiWTEseUfAo0hLFZ/yxF6tdzBg=="/>
         </item>
     </channel>
 </rss>
